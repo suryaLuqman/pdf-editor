@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Editor Pro</title>
+
+    <!-- Google Fonts (preload untuk akses cepat) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Oswald:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+                   VARIABEL CSS – Classic Enterprise UI
+                   ============================================================ */
+        :root {
+            --primary-grey: #5A5959;
+            --primary-beige: #F3F3E8;
+            --accent-gold: #FFB800;
+            --border-grey: #D9D9D2;
+            --row-hover: #FEE79B;
+            --text-main: #2B2B2B;
+            --text-header: #000000;
+
+            --toolbar-bg: var(--primary-grey);
+            --toolbar-text: #ffffff;
+            --accent: var(--accent-gold);
+            --accent-hover: #e6a600;
+            --danger: #c0392b;
+            --page-bg: var(--primary-beige);
+            --page-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+            --border-radius: 8px;
+            --font-base: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* ============================================================
+                   RESET & GLOBAL
+                   ============================================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-base);
+            background: var(--primary-beige);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        /* ============================================================
+                   TOOLBAR
+                   ============================================================ */
+        #toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            background: var(--toolbar-bg);
+            color: #fff;
+            padding: 10px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.30);
+            transition: all 0.2s;
+        }
+
+        #toolbar h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-right: 8px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            color: #fff;
+        }
+
+        #toolbar .sep {
+            width: 1px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.25);
+            flex-shrink: 0;
+        }
+
+        .toolbar-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 8px;
+        }
+
+        .toolbar-group label {
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0.85;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            color: #fff;
+        }
+
+        #toolbar button,
+        #toolbar select,
+        #toolbar input[type="file"],
+        #toolbar input[type="text"],
+        #toolbar input[type="color"],
+        #toolbar input[type="number"] {
+            padding: 5px 10px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+            font-family: inherit;
+            background: #fff;
+            color: var(--text-main);
+            border: 1px solid var(--border-grey);
+        }
+
+        #toolbar button {
+            background: var(--accent);
+            color: var(--text-header);
+            font-weight: 600;
+            border: none;
+        }
+
+        #toolbar button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(255, 184, 0, 0.35);
+        }
+
+        #toolbar button:active {
+            transform: translateY(0);
+        }
+
+        #toolbar button:disabled {
+            background: #b0a9a9;
+            color: #555;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        #toolbar select {
+            background: #fff;
+            min-width: 100px;
+            cursor: pointer;
+            border: 1px solid var(--border-grey);
+        }
+
+        #toolbar select:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #toolbar input[type="file"] {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border: 1px dashed rgba(255, 255, 255, 0.35);
+            padding: 4px 8px;
+            max-width: 140px;
+            font-size: 0.75rem;
+        }
+
+        #toolbar input[type="file"]::file-selector-button {
+            background: var(--accent);
+            color: var(--text-header);
+            border: none;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        #toolbar input[type="file"]::file-selector-button:hover {
+            background: var(--accent-hover);
+        }
+
+        #toolbar input[type="text"],
+        #toolbar input[type="number"] {
+            width: 70px;
+            padding: 4px 6px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-grey);
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        #toolbar input[type="color"] {
+            width: 32px;
+            height: 32px;
+            padding: 2px;
+            border-radius: 50%;
+            border: 2px solid var(--border-grey);
+            cursor: pointer;
+            background: #fff;
+        }
+
+        #toolbar input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        #toolbar input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+        #customPages {
+            width: 90px;
+            display: none;
+        }
+
+        #customPages.visible {
+            display: inline-block;
+        }
+
+        /* tombol aksesori */
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.10) !important;
+            color: #fff !important;
+            border: 1px solid rgba(255, 255, 255, 0.20) !important;
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.20) !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger) !important;
+            color: #fff !important;
+            border: none !important;
+        }
+
+        .btn-danger:hover {
+            background: #a93226 !important;
+        }
+
+        /* ============================================================
+                   DROP ZONE
+                   ============================================================ */
+        #dropZone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(90, 89, 89, 0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s;
+            backdrop-filter: blur(4px);
+        }
+
+        #dropZone.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #dropZone .drop-message {
+            background: #fff;
+            padding: 32px 56px;
+            border-radius: 20px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-header);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.30);
+            border: 3px dashed var(--accent-gold);
+        }
+
+        /* ============================================================
+                   PAGES CONTAINER
+                   ============================================================ */
+        #pagesContainer {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .page-container {
+            position: relative;
+            background: #fff;
+            box-shadow: var(--page-shadow);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: outline 0.2s, box-shadow 0.2s;
+            outline: 3px solid transparent;
+        }
+
+        .page-container.active {
+            outline: 3px solid var(--accent-gold);
+            box-shadow: 0 4px 20px rgba(255, 184, 0, 0.30);
+        }
+
+        .page-container canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .overlay .object-item {
+            pointer-events: auto;
+            cursor: move;
+            position: absolute;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .object-item img {
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: fill;
+        }
+
+        .object-item.selected {
+            outline: 2px dashed var(--danger);
+            outline-offset: 2px;
+        }
+
+        /* --- Text object --- */
+        .object-item.text-object {
+            cursor: move;
+            padding: 4px 6px;
+            border-radius: 2px;
+            min-width: 20px;
+            min-height: 20px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.3;
+            font-weight: 400;
+            transition: outline 0.15s;
+        }
+
+        .object-item.text-object.selected {
+            outline: 2px dashed var(--danger);
+            outline-offset: 2px;
+        }
+
+        /* --- Resize handles --- */
+        .resize-handle {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #fff;
+            border: 2.5px solid var(--danger);
+            border-radius: 50%;
+            z-index: 10;
+            pointer-events: auto;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
+        }
+
+        .resize-handle.nw {
+            top: -7px;
+            left: -7px;
+            cursor: nwse-resize;
+        }
+        .resize-handle.ne {
+            top: -7px;
+            right: -7px;
+            cursor: nesw-resize;
+        }
+        .resize-handle.sw {
+            bottom: -7px;
+            left: -7px;
+            cursor: nesw-resize;
+        }
+        .resize-handle.se {
+            bottom: -7px;
+            right: -7px;
+            cursor: nwse-resize;
+        }
+
+        /* ============================================================
+                   EMPTY STATE
+                   ============================================================ */
+        .empty-state {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            padding: 60px 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 500px;
+            border: 2px dashed var(--border-grey);
+        }
+
+        /* ============================================================
+                   MODAL (Teks)
+                   ============================================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            backdrop-filter: blur(3px);
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 720px;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            padding: 28px 32px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            position: relative;
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                transform: scale(0.95) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-box h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-header);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-box h2 small {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: #777;
+            margin-left: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-header);
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px 20px;
+        }
+
+        .modal-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .modal-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .modal-field label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: 0.2px;
+        }
+
+        .modal-field textarea,
+        .modal-field select,
+        .modal-field input[type="number"],
+        .modal-field input[type="text"] {
+            padding: 8px 12px;
+            border: 1.5px solid var(--border-grey);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: border 0.15s, box-shadow 0.15s;
+            background: #fff;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .modal-field textarea {
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+        }
+
+        .modal-field textarea:focus,
+        .modal-field select:focus,
+        .modal-field input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.20);
+        }
+
+        .modal-field .color-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .modal-field .color-row input[type="color"] {
+            width: 44px;
+            height: 44px;
+            padding: 2px;
+            border-radius: 8px;
+            border: 2px solid var(--border-grey);
+            cursor: pointer;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        .modal-field .color-row input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .modal-field .color-row input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 6px;
+        }
+
+        .modal-field .color-row .color-hex {
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: #555;
+        }
+
+        .modal-field .color-row .bg-none-btn {
+            padding: 4px 14px;
+            border: 1.5px solid var(--border-grey);
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.15s;
+            color: var(--text-main);
+        }
+
+        .modal-field .color-row .bg-none-btn.active {
+            border-color: var(--accent-gold);
+            background: var(--row-hover);
+        }
+
+        .modal-field .color-row .bg-none-btn:hover {
+            border-color: var(--accent-gold);
+        }
+
+        /* Font upload area */
+        .font-upload-area {
+            border: 2px dashed var(--border-grey);
+            border-radius: 10px;
+            padding: 16px 18px;
+            background: var(--primary-beige);
+            transition: border 0.2s, background 0.2s;
+        }
+
+        .font-upload-area:hover {
+            border-color: var(--accent-gold);
+            background: #f8f8ee;
+        }
+
+        .font-upload-area .upload-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .font-upload-area .upload-row input[type="file"] {
+            flex: 1;
+            min-width: 140px;
+            font-size: 0.75rem;
+        }
+
+        .font-upload-area .upload-info {
+            font-size: 0.7rem;
+            color: #777;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .font-upload-area .upload-info strong {
+            color: var(--text-main);
+        }
+
+        .font-upload-area .uploaded-fonts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .font-upload-area .uploaded-fonts .font-tag {
+            background: #fff;
+            border: 1px solid var(--border-grey);
+            border-radius: 20px;
+            padding: 2px 12px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-main);
+        }
+
+        .font-upload-area .uploaded-fonts .font-tag .remove-font {
+            cursor: pointer;
+            color: #999;
+            font-weight: 700;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        .font-upload-area .uploaded-fonts .font-tag .remove-font:hover {
+            color: var(--danger);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 22px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-grey);
+        }
+
+        .modal-actions button {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .modal-actions .btn-primary {
+            background: var(--accent-gold);
+            color: var(--text-header);
+        }
+
+        .modal-actions .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(255, 184, 0, 0.35);
+        }
+
+        .modal-actions .btn-secondary {
+            background: var(--border-grey);
+            color: var(--text-main);
+        }
+
+        .modal-actions .btn-secondary:hover {
+            background: #cbcbc4;
+        }
+
+        /* ============================================================
+                   RESPONSIVE
+                   ============================================================ */
+        @media (max-width: 820px) {
+            #toolbar {
+                padding: 8px 12px;
+                gap: 4px 8px;
+            }
+
+            #toolbar h1 {
+                font-size: 1rem;
+                margin-right: 4px;
+            }
+
+            #toolbar .sep {
+                height: 20px;
+            }
+
+            #toolbar button,
+            #toolbar select,
+            #toolbar input[type="file"],
+            #toolbar input[type="text"],
+            #toolbar input[type="number"] {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+            }
+
+            #toolbar input[type="file"] {
+                max-width: 100px;
+                font-size: 0.65rem;
+            }
+
+            .modal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-box {
+                padding: 20px 18px;
+                max-width: 100%;
+            }
+
+            #pagesContainer {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            #toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+
+            #toolbar .toolbar-group {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+
+            #toolbar .sep {
+                display: none;
+            }
+
+            #toolbar input[type="file"] {
+                max-width: 100%;
+            }
+
+            .modal-box {
+                padding: 16px 14px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions button {
+                width: 100%;
+            }
+        }
+
+        /* ============================================================
+                   SCROLLBAR MODAL
+                   ============================================================ */
+        .modal-box::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .modal-box::-webkit-scrollbar-track {
+            background: var(--primary-beige);
+        }
+
+        .modal-box::-webkit-scrollbar-thumb {
+            background: var(--border-grey);
+            border-radius: 10px;
+        }
+
+        .modal-box::-webkit-scrollbar-thumb:hover {
+            background: #b0b0a8;
+        }
+
+        /* ============================================================
+                   TOAST / NOTIF
+                   ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-grey);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ======== TOOLBAR ======== -->
+    <div id="toolbar">
+        <h1>📄 PDF Editor</h1>
+
+        <div class="toolbar-group">
+            <input type="file" id="pdfUpload" accept="application/pdf" title="Unggah PDF" />
+        </div>
+
+        <span class="sep"></span>
+
+        <div class="toolbar-group">
+            <button id="addImageBtn" disabled>🖼️ Gambar</button>
+            <input type="file" id="imageInput" accept="image/*" style="display:none" />
+        </div>
+
+        <span class="sep"></span>
+
+        <div class="toolbar-group">
+            <select id="shapeType" disabled>
+                <option value="rect">Persegi Panjang</option>
+                <option value="square">Persegi</option>
+                <option value="ellipse">Lingkaran</option>
+                <option value="triangle">Segitiga</option>
+                <option value="line">Garis</option>
+            </select>
+            <button id="addShapeBtn" disabled>🔷 Shape</button>
+        </div>
+
+        <span class="sep"></span>
+
+        <!-- ====== TEXT GROUP ====== -->
+        <div class="toolbar-group">
+            <button id="addTextBtn" disabled class="btn-ghost" style="background:rgba(255,255,255,0.12)!important;">✏️ Teks</button>
+        </div>
+
+        <span class="sep"></span>
+
+        <div class="toolbar-group">
+            <select id="applyMode" disabled>
+                <option value="all">Semua Halaman</option>
+                <option value="current">Halaman Ini</option>
+                <option value="custom">Halaman Kustom</option>
+            </select>
+            <input type="text" id="customPages" placeholder="1,3,5" />
+            <button id="deleteBtn" disabled class="btn-danger">🗑️ Hapus</button>
+            <button id="downloadBtn" disabled style="background:#2c7a3e;color:#fff;">💾 Download</button>
+        </div>
+    </div>
+
+    <!-- ======== DROP ZONE ======== -->
+    <div id="dropZone">
+        <div class="drop-message">📂 Lepaskan file PDF di sini</div>
+    </div>
+
+    <!-- ======== PAGES ======== -->
+    <div id="pagesContainer">
+        <div class="empty-state">📄 Seret &amp; letakkan PDF di sini atau pilih file.</div>
+    </div>
+
+    <!-- ======== MODAL TEKS ======== -->
+    <div class="modal-overlay" id="textModal">
+        <div class="modal-box">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            <h2>✏️ Tambah Teks <small>atur gaya &amp; font</small></h2>
+
+            <div class="modal-grid">
+                <!-- Konten -->
+                <div class="modal-field full-width">
+                    <label for="textContent">Teks</label>
+                    <textarea id="textContent" rows="3" placeholder="Ketik teks di sini…"></textarea>
+                </div>
+
+                <!-- Font Family -->
+                <div class="modal-field">
+                    <label for="fontFamilySelect">Font Family</label>
+                    <select id="fontFamilySelect">
+                        <optgroup label="System Fonts">
+                            <option value="Arial">Arial</option>
+                            <option value="Calibri">Calibri</option>
+                            <option value="'Times New Roman'">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Tahoma">Tahoma</option>
+                            <option value="'Courier New'">Courier New</option>
+                            <option value="Impact">Impact</option>
+                            <option value="'Comic Sans MS'">Comic Sans MS</option>
+                            <option value="'Trebuchet MS'">Trebuchet MS</option>
+                            <option value="'Segoe UI'">Segoe UI</option>
+                        </optgroup>
+                        <optgroup label="Google Fonts">
+                            <option value="'Roboto'">Roboto</option>
+                            <option value="'Open Sans'">Open Sans</option>
+                            <option value="'Lato'">Lato</option>
+                            <option value="'Montserrat'">Montserrat</option>
+                            <option value="'Oswald'">Oswald</option>
+                            <option value="'Raleway'">Raleway</option>
+                            <option value="'Poppins'">Poppins</option>
+                            <option value="'Inter'">Inter</option>
+                            <option value="'Playfair Display'">Playfair Display</option>
+                            <option value="'Merriweather'">Merriweather</option>
+                        </optgroup>
+                        <optgroup label="Custom" id="customFontOptgroup">
+                            <!-- diisi lewat JS -->
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Ukuran -->
+                <div class="modal-field">
+                    <label for="fontSizeInput">Ukuran (px)</label>
+                    <input type="number" id="fontSizeInput" value="28" min="8" max="300" step="1" />
+                </div>
+
+                <!-- Warna Teks -->
+                <div class="modal-field">
+                    <label>Warna Teks</label>
+                    <div class="color-row">
+                        <input type="color" id="textColorPicker" value="#2B2B2B" />
+                        <span class="color-hex" id="textColorHex">#2B2B2B</span>
+                    </div>
+                </div>
+
+                <!-- Warna Background -->
+                <div class="modal-field">
+                    <label>Warna Background</label>
+                    <div class="color-row">
+                        <input type="color" id="bgColorPicker" value="#F3F3E8" />
+                        <span class="color-hex" id="bgColorHex">#F3F3E8</span>
+                        <button class="bg-none-btn" id="bgNoneBtn">✕ Tanpa BG</button>
+                    </div>
+                </div>
+
+                <!-- Upload Font Custom -->
+                <div class="modal-field full-width">
+                    <label>Font Custom <span style="font-weight:400;color:#777;font-size:0.75rem;">— upload font sendiri</span></label>
+                    <div class="font-upload-area">
+                        <div class="upload-row">
+                            <input type="file" id="fontUploadInput" accept=".ttf,.otf,.woff,.woff2" />
+                            <button id="fontUploadBtn" class="btn-ghost" style="background:var(--accent-gold)!important;color:var(--text-header)!important;border:none!important;">⬆ Upload</button>
+                        </div>
+                        <div class="upload-info">
+                            <strong>Persyaratan:</strong> format <strong>.ttf .otf .woff .woff2</strong> &bull; maks. <strong>5 MB</strong> &bull; browser modern dengan dukungan <strong>FontFace</strong>.
+                        </div>
+                        <div class="uploaded-fonts" id="uploadedFontsList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-secondary" id="modalCancelBtn">Batal</button>
+                <button class="btn-primary" id="modalAddBtn">➕ Tambah Teks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======== TOAST ======== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============================================================
+    LIBRARY
+    ============================================================ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js">
+    </script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // STATE
+            // ============================================================
+            let pdfDoc = null;
+            let pdfBytes = null;
+            let pagesData = [];
+            let objects = [];
+            let selectedObjectId = null;
+            let currentPageIndex = 0;
+            let isPdfLoaded = false;
+
+            // Custom fonts yang diupload { name, data: ArrayBuffer, family }
+            let customFonts = [];
+
+            // ============================================================
+            // DOM REFS
+            // ============================================================
+            const pdfUploadInput = document.getElementById('pdfUpload');
+            const imageInput = document.getElementById('imageInput');
+            const addImageBtn = document.getElementById('addImageBtn');
+            const addShapeBtn = document.getElementById('addShapeBtn');
+            const shapeTypeSelect = document.getElementById('shapeType');
+            const addTextBtn = document.getElementById('addTextBtn');
+            const applyModeSelect = document.getElementById('applyMode');
+            const customPagesInput = document.getElementById('customPages');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const pagesContainer = document.getElementById('pagesContainer');
+            const dropZone = document.getElementById('dropZone');
+
+            // Modal
+            const textModal = document.getElementById('textModal');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+            const modalAddBtn = document.getElementById('modalAddBtn');
+            const textContent = document.getElementById('textContent');
+            const fontFamilySelect = document.getElementById('fontFamilySelect');
+            const fontSizeInput = document.getElementById('fontSizeInput');
+            const textColorPicker = document.getElementById('textColorPicker');
+            const textColorHex = document.getElementById('textColorHex');
+            const bgColorPicker = document.getElementById('bgColorPicker');
+            const bgColorHex = document.getElementById('bgColorHex');
+            const bgNoneBtn = document.getElementById('bgNoneBtn');
+            const fontUploadInput = document.getElementById('fontUploadInput');
+            const fontUploadBtn = document.getElementById('fontUploadBtn');
+            const uploadedFontsList = document.getElementById('uploadedFontsList');
+
+            const toastEl = document.getElementById('toast');
+
+            // ============================================================
+            // PDF.JS WORKER
+            // ============================================================
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+            // ============================================================
+            // UTILITY
+            // ============================================================
+            function generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
+            }
+
+            function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
+
+            function dataUrlToUint8Array(dataUrl) {
+                const base64 = dataUrl.split(',')[1];
+                const binary = atob(base64);
+                const len = binary.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+                return bytes;
+            }
+
+            function getMimeType(dataUrl) {
+                return dataUrl.split(';')[0].split(':')[1];
+            }
+
+            function hexToRgb(hex) {
+                if (!hex || hex === 'none' || hex === 'transparent') return null;
+                let h = hex.replace('#', '');
+                if (h.length === 3) h = h.split('').map(c => c + c).join('');
+                const r = parseInt(h.substring(0, 2), 16) / 255;
+                const g = parseInt(h.substring(2, 4), 16) / 255;
+                const b = parseInt(h.substring(4, 6), 16) / 255;
+                return { r, g, b };
+            }
+
+            function getPageAssignments() {
+                const mode = applyModeSelect.value;
+                if (mode === 'all') return pagesData.map(p => p.pageIndex);
+                if (mode === 'current') return [currentPageIndex];
+                if (mode === 'custom') {
+                    const raw = customPagesInput.value.trim();
+                    if (!raw) return [currentPageIndex];
+                    const pages = raw.split(',').map(s => parseInt(s.trim()) - 1)
+                        .filter(i => !isNaN(i) && i >= 0 && i < pagesData.length);
+                    return pages.length > 0 ? pages : [currentPageIndex];
+                }
+                return [currentPageIndex];
+            }
+
+            function showToast(msg, duration) {
+                duration = duration || 2800;
+                toastEl.textContent = msg;
+                toastEl.classList.add('show');
+                clearTimeout(toastEl._timer);
+                toastEl._timer = setTimeout(() => toastEl.classList.remove('show'), duration);
+            }
+
+            function showError(msg) {
+                showToast('❌ ' + msg, 3500);
+            }
+
+            function showSuccess(msg) {
+                showToast('✅ ' + msg, 2500);
+            }
+
+            // ============================================================
+            // LOAD PDF
+            // ============================================================
+            async function loadPDF(file) {
+                const arrayBuffer = await file.arrayBuffer();
+                pdfBytes = arrayBuffer.slice(0);
+                const pdfJsBuffer = arrayBuffer.slice(0);
+
+                try {
+                    pdfDoc = await pdfjsLib.getDocument({ data: pdfJsBuffer }).promise;
+                } catch (err) {
+                    showError('Gagal memuat PDF: ' + err.message);
+                    return;
+                }
+
+                pagesData = [];
+                objects = [];
+                selectedObjectId = null;
+                currentPageIndex = 0;
+                pagesContainer.innerHTML = '';
+
+                const totalPages = pdfDoc.numPages;
+                for (let i = 0; i < totalPages; i++) {
+                    await renderPage(i);
+                }
+
+                isPdfLoaded = true;
+                updateUIState();
+                renderAllObjects();
+                updateCurrentPageHighlight();
+                showSuccess('PDF berhasil dimuat (' + totalPages + ' halaman)');
+            }
+
+            async function renderPage(pageIndex) {
+                const page = await pdfDoc.getPage(pageIndex + 1);
+                const viewport1 = page.getViewport({ scale: 1 });
+                const pageWidth = viewport1.width;
+                const pageHeight = viewport1.height;
+
+                const scale = Math.min(800 / pageWidth, 1000 / pageHeight);
+                const scaledViewport = page.getViewport({ scale });
+
+                const container = document.createElement('div');
+                container.className = 'page-container';
+                container.dataset.pageIndex = pageIndex;
+                container.style.width = scaledViewport.width + 'px';
+                container.style.height = scaledViewport.height + 'px';
+
+                const canvas = document.createElement('canvas');
+                canvas.width = scaledViewport.width;
+                canvas.height = scaledViewport.height;
+                container.appendChild(canvas);
+
+                const ctx = canvas.getContext('2d');
+                await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.style.width = scaledViewport.width + 'px';
+                overlay.style.height = scaledViewport.height + 'px';
+                container.appendChild(overlay);
+
+                container.addEventListener('click', (e) => {
+                    if (e.target === container || e.target === canvas || e.target === overlay) {
+                        currentPageIndex = pageIndex;
+                        updateCurrentPageHighlight();
+                    }
+                });
+
+                pagesContainer.appendChild(container);
+
+                pagesData.push({
+                    pageIndex,
+                    pageWidth,
+                    pageHeight,
+                    scale,
+                    container,
+                    overlay,
+                    canvas
+                });
+            }
+
+            function updateCurrentPageHighlight() {
+                pagesData.forEach(p => {
+                    p.container.classList.toggle('active', p.pageIndex === currentPageIndex);
+                });
+            }
+
+            // ============================================================
+            // OBJECT MANAGEMENT
+            // ============================================================
+            function createObject(type, data) {
+                data = data || {};
+                const obj = {
+                    id: generateId(),
+                    type: type,
+                    x: data.x ?? 100,
+                    y: data.y ?? 100,
+                    width: data.width ?? 200,
+                    height: data.height ?? 150,
+                    pageAssignments: data.pageAssignments ?? getPageAssignments(),
+                    src: data.src || null,
+                    fillColor: data.fillColor || '#FFB800',
+                    strokeColor: data.strokeColor || '#2B2B2B',
+                    strokeWidth: data.strokeWidth ?? 2,
+                    // text specific
+                    textContent: data.textContent || '',
+                    fontFamily: data.fontFamily || 'Arial',
+                    fontSize: data.fontSize || 28,
+                    textColor: data.textColor || '#2B2B2B',
+                    bgColor: data.bgColor || 'transparent',
+                };
+                objects.push(obj);
+                renderAllObjects();
+                selectObject(obj.id);
+                return obj;
+            }
+
+            function deleteObject(objId) {
+                objects = objects.filter(o => o.id !== objId);
+                if (selectedObjectId === objId) selectedObjectId = null;
+                renderAllObjects();
+                updateUIState();
+            }
+
+            function selectObject(objId) {
+                selectedObjectId = objId;
+                updateSelection();
+                updateUIState();
+            }
+
+            function updateSelection() {
+                document.querySelectorAll('.object-item.selected').forEach(el => {
+                    el.classList.remove('selected');
+                    el.querySelectorAll('.resize-handle').forEach(h => h.remove());
+                });
+
+                if (!selectedObjectId) return;
+
+                document.querySelectorAll(`.object-item[data-object-id="${selectedObjectId}"]`).forEach(el => {
+                    el.classList.add('selected');
+                    addResizeHandles(el);
+                });
+            }
+
+            function addResizeHandles(el) {
+                const positions = ['nw', 'ne', 'sw', 'se'];
+                positions.forEach(pos => {
+                    const handle = document.createElement('div');
+                    handle.className = 'resize-handle ' + pos;
+                    handle.dataset.handlePos = pos;
+                    handle.addEventListener('mousedown', (e) => onResizeHandleMouseDown(e, selectedObjectId, pos));
+                    el.appendChild(handle);
+                });
+            }
+
+            // ============================================================
+            // RENDER OBJEK
+            // ============================================================
+            function createObjectElement(obj, scale) {
+                const el = document.createElement('div');
+                el.className = 'object-item';
+                if (obj.type === 'text') el.classList.add('text-object');
+                el.dataset.objectId = obj.id;
+                el.style.left = (obj.x * scale) + 'px';
+                el.style.top = (obj.y * scale) + 'px';
+                el.style.width = (obj.width * scale) + 'px';
+                el.style.height = (obj.height * scale) + 'px';
+                el.style.position = 'absolute';
+                el.style.cursor = 'move';
+                el.style.boxSizing = 'border-box';
+                el.style.overflow = 'hidden';
+
+                if (obj.type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = obj.src;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.pointerEvents = 'none';
+                    img.draggable = false;
+                    el.appendChild(img);
+                } else if (obj.type === 'text') {
+                    // Text object
+                    const textDiv = document.createElement('div');
+                    textDiv.style.width = '100%';
+                    textDiv.style.height = '100%';
+                    textDiv.style.padding = '4px 6px';
+                    textDiv.style.boxSizing = 'border-box';
+                    textDiv.style.overflow = 'hidden';
+                    textDiv.style.wordBreak = 'break-word';
+                    textDiv.style.whiteSpace = 'pre-wrap';
+                    textDiv.style.lineHeight = '1.3';
+                    textDiv.style.fontFamily = obj.fontFamily || 'Arial';
+                    textDiv.style.fontSize = (obj.fontSize * scale) + 'px';
+                    textDiv.style.color = obj.textColor || '#2B2B2B';
+                    textDiv.style.backgroundColor = obj.bgColor || 'transparent';
+                    if (obj.bgColor === 'transparent' || !obj.bgColor || obj.bgColor === 'none') {
+                        textDiv.style.backgroundColor = 'transparent';
+                    }
+                    textDiv.textContent = obj.textContent || 'Teks';
+                    el.appendChild(textDiv);
+                    el._textDiv = textDiv;
+
+                    // double click to edit
+                    el.addEventListener('dblclick', (e) => {
+                        e.stopPropagation();
+                        openEditTextModal(obj.id);
+                    });
+
+                } else {
+                    // Shape: SVG
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', '100%');
+                    svg.setAttribute('height', '100%');
+                    svg.setAttribute('viewBox', '0 0 100 100');
+                    svg.setAttribute('preserveAspectRatio', 'none');
+                    svg.style.display = 'block';
+
+                    const sw = obj.strokeWidth * scale;
+                    const fill = obj.fillColor || 'none';
+                    const stroke = obj.strokeColor || 'none';
+
+                    let shapeEl;
+                    switch (obj.type) {
+                        case 'rect':
+                        case 'square':
+                            shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                            shapeEl.setAttribute('x', '0');
+                            shapeEl.setAttribute('y', '0');
+                            shapeEl.setAttribute('width', '100');
+                            shapeEl.setAttribute('height', '100');
+                            break;
+                        case 'ellipse':
+                            shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+                            shapeEl.setAttribute('cx', '50');
+                            shapeEl.setAttribute('cy', '50');
+                            shapeEl.setAttribute('rx', '50');
+                            shapeEl.setAttribute('ry', '50');
+                            break;
+                        case 'triangle':
+                            shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                            shapeEl.setAttribute('points', '50,5 95,95 5,95');
+                            break;
+                        case 'line':
+                            shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            shapeEl.setAttribute('x1', '0');
+                            shapeEl.setAttribute('y1', '100');
+                            shapeEl.setAttribute('x2', '100');
+                            shapeEl.setAttribute('y2', '0');
+                            break;
+                    }
+                    shapeEl.setAttribute('fill', fill);
+                    shapeEl.setAttribute('stroke', stroke);
+                    shapeEl.setAttribute('stroke-width', sw);
+                    shapeEl.setAttribute('vector-effect', 'non-scaling-stroke');
+                    svg.appendChild(shapeEl);
+                    el.appendChild(svg);
+                    el._shapeElement = shapeEl;
+                }
+
+                el.addEventListener('mousedown', (e) => onObjectMouseDown(e, obj.id));
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectObject(obj.id);
+                });
+
+                return el;
+            }
+
+            function renderAllObjects() {
+                pagesData.forEach(page => {
+                    page.overlay.innerHTML = '';
+                });
+
+                objects.forEach(obj => {
+                    obj.pageAssignments.forEach(pageIndex => {
+                        const page = pagesData.find(p => p.pageIndex === pageIndex);
+                        if (!page) return;
+                        const el = createObjectElement(obj, page.scale);
+                        page.overlay.appendChild(el);
+                    });
+                });
+
+                if (selectedObjectId) {
+                    updateSelection();
+                }
+            }
+
+            function updateObjectElements(obj) {
+                pagesData.forEach(page => {
+                    const elements = page.overlay.querySelectorAll(`.object-item[data-object-id="${obj.id}"]`);
+                    elements.forEach(el => {
+                        el.style.left = (obj.x * page.scale) + 'px';
+                        el.style.top = (obj.y * page.scale) + 'px';
+                        el.style.width = (obj.width * page.scale) + 'px';
+                        el.style.height = (obj.height * page.scale) + 'px';
+
+                        if (obj.type === 'text' && el._textDiv) {
+                            el._textDiv.style.fontSize = (obj.fontSize * page.scale) + 'px';
+                            el._textDiv.style.fontFamily = obj.fontFamily || 'Arial';
+                            el._textDiv.style.color = obj.textColor || '#2B2B2B';
+                            if (obj.bgColor && obj.bgColor !== 'transparent' && obj.bgColor !== 'none') {
+                                el._textDiv.style.backgroundColor = obj.bgColor;
+                            } else {
+                                el._textDiv.style.backgroundColor = 'transparent';
+                            }
+                            el._textDiv.textContent = obj.textContent || 'Teks';
+                        }
+
+                        if (obj.type !== 'text' && obj.type !== 'image' && el._shapeElement) {
+                            el._shapeElement.setAttribute('fill', obj.fillColor || 'none');
+                            el._shapeElement.setAttribute('stroke', obj.strokeColor || 'none');
+                            el._shapeElement.setAttribute('stroke-width', obj.strokeWidth * page.scale);
+                        }
+                    });
+                });
+            }
+
+            // ============================================================
+            // MOUSE INTERACTIONS (drag & resize)
+            // ============================================================
+            function onObjectMouseDown(e, objId) {
+                e.preventDefault();
+                e.stopPropagation();
+                selectObject(objId);
+                const obj = objects.find(o => o.id === objId);
+                if (!obj) return;
+
+                const overlay = e.target.closest('.overlay');
+                const page = pagesData.find(p => p.overlay === overlay);
+                if (!page) return;
+
+                const scale = page.scale;
+                const startMX = e.clientX;
+                const startMY = e.clientY;
+                const startX = obj.x;
+                const startY = obj.y;
+
+                function onMove(ev) {
+                    const dx = (ev.clientX - startMX) / scale;
+                    const dy = (ev.clientY - startMY) / scale;
+                    obj.x = clamp(startX + dx, 0, page.pageWidth - obj.width);
+                    obj.y = clamp(startY + dy, 0, page.pageHeight - obj.height);
+                    updateObjectElements(obj);
+                }
+
+                function onUp() {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                }
+
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            }
+
+            function onResizeHandleMouseDown(e, objId, pos) {
+                e.preventDefault();
+                e.stopPropagation();
+                selectedObjectId = objId;
+                const obj = objects.find(o => o.id === objId);
+                if (!obj) return;
+
+                const overlay = e.target.closest('.overlay');
+                const page = pagesData.find(p => p.overlay === overlay);
+                if (!page) return;
+
+                const scale = page.scale;
+                const startMX = e.clientX;
+                const startMY = e.clientY;
+                const startX = obj.x;
+                const startY = obj.y;
+                const startW = obj.width;
+                const startH = obj.height;
+
+                function onMove(ev) {
+                    const dx = (ev.clientX - startMX) / scale;
+                    const dy = (ev.clientY - startMY) / scale;
+
+                    let newX = startX,
+                        newY = startY,
+                        newW = startW,
+                        newH = startH;
+
+                    if (pos.includes('e')) newW = Math.max(10, startW + dx);
+                    if (pos.includes('s')) newH = Math.max(10, startH + dy);
+                    if (pos.includes('w')) {
+                        newW = Math.max(10, startW - dx);
+                        newX = startX + dx;
+                    }
+                    if (pos.includes('n')) {
+                        newH = Math.max(10, startH - dy);
+                        newY = startY + dy;
+                    }
+
+                    newX = clamp(newX, 0, page.pageWidth - newW);
+                    newY = clamp(newY, 0, page.pageHeight - newH);
+
+                    obj.x = newX;
+                    obj.y = newY;
+                    obj.width = newW;
+                    obj.height = newH;
+                    updateObjectElements(obj);
+                }
+
+                function onUp() {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                    updateSelection();
+                }
+
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            }
+
+            // ============================================================
+            // TEXT MODAL
+            // ============================================================
+            let editingTextId = null;
+
+            function openAddTextModal() {
+                editingTextId = null;
+                textContent.value = '';
+                fontSizeInput.value = 28;
+                textColorPicker.value = '#2B2B2B';
+                textColorHex.textContent = '#2B2B2B';
+                bgColorPicker.value = '#F3F3E8';
+                bgColorHex.textContent = '#F3F3E8';
+                bgNoneBtn.classList.remove('active');
+                fontFamilySelect.value = 'Arial';
+                textModal.classList.add('active');
+                textContent.focus();
+            }
+
+            function openEditTextModal(objId) {
+                const obj = objects.find(o => o.id === objId);
+                if (!obj || obj.type !== 'text') return;
+                editingTextId = objId;
+                textContent.value = obj.textContent || '';
+                fontSizeInput.value = obj.fontSize || 28;
+                textColorPicker.value = obj.textColor || '#2B2B2B';
+                textColorHex.textContent = obj.textColor || '#2B2B2B';
+                const bg = obj.bgColor || 'transparent';
+                if (bg === 'transparent' || bg === 'none') {
+                    bgColorPicker.value = '#F3F3E8';
+                    bgColorHex.textContent = '#F3F3E8';
+                    bgNoneBtn.classList.add('active');
+                } else {
+                    bgColorPicker.value = bg;
+                    bgColorHex.textContent = bg;
+                    bgNoneBtn.classList.remove('active');
+                }
+                fontFamilySelect.value = obj.fontFamily || 'Arial';
+                textModal.classList.add('active');
+                textContent.focus();
+                textContent.select();
+            }
+
+            function closeTextModal() {
+                textModal.classList.remove('active');
+                editingTextId = null;
+            }
+
+            function applyTextFromModal() {
+                const content = textContent.value.trim();
+                if (!content) {
+                    showError('Teks tidak boleh kosong.');
+                    return;
+                }
+
+                const fontFamily = fontFamilySelect.value;
+                const fontSize = parseInt(fontSizeInput.value) || 28;
+                const textColor = textColorPicker.value;
+                let bgColor = bgNoneBtn.classList.contains('active') ? 'transparent' : bgColorPicker.value;
+
+                const page = pagesData[currentPageIndex];
+                let w = 320,
+                    h = 80;
+                if (page) {
+                    // estimasi lebar berdasarkan teks
+                    const temp = document.createElement('span');
+                    temp.style.fontSize = fontSize + 'px';
+                    temp.style.fontFamily = fontFamily;
+                    temp.style.visibility = 'hidden';
+                    temp.style.position = 'absolute';
+                    temp.textContent = content;
+                    document.body.appendChild(temp);
+                    const rect = temp.getBoundingClientRect();
+                    w = Math.max(60, rect.width + 20);
+                    h = Math.max(30, rect.height + 16);
+                    document.body.removeChild(temp);
+                }
+
+                const x = (page ? (page.pageWidth - w) / 2 : 100);
+                const y = (page ? (page.pageHeight - h) / 2 : 100);
+
+                if (editingTextId) {
+                    // Edit existing
+                    const obj = objects.find(o => o.id === editingTextId);
+                    if (obj && obj.type === 'text') {
+                        obj.textContent = content;
+                        obj.fontFamily = fontFamily;
+                        obj.fontSize = fontSize;
+                        obj.textColor = textColor;
+                        obj.bgColor = bgColor;
+                        // update ukuran
+                        obj.width = w;
+                        obj.height = h;
+                        updateObjectElements(obj);
+                        renderAllObjects();
+                        showSuccess('Teks diperbarui');
+                    }
+                } else {
+                    // Create new
+                    createObject('text', {
+                        x: x,
+                        y: y,
+                        width: w,
+                        height: h,
+                        pageAssignments: getPageAssignments(),
+                        textContent: content,
+                        fontFamily: fontFamily,
+                        fontSize: fontSize,
+                        textColor: textColor,
+                        bgColor: bgColor,
+                    });
+                    showSuccess('Teks ditambahkan');
+                }
+                closeTextModal();
+            }
+
+            // ============================================================
+            // CUSTOM FONT UPLOAD
+            // ============================================================
+            async function uploadCustomFont(file) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                const validExts = ['ttf', 'otf', 'woff', 'woff2'];
+                if (!validExts.includes(ext)) {
+                    showError('Format tidak didukung. Gunakan .ttf .otf .woff .woff2');
+                    return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('Ukuran file maksimal 5 MB.');
+                    return;
+                }
+
+                try {
+                    const buffer = await file.arrayBuffer();
+                    const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9]/g, '_');
+                    const family = 'custom_' + fontName + '_' + Date.now().toString(36);
+
+                    // Load dengan FontFace API
+                    const fontData = new Uint8Array(buffer);
+                    const blob = new Blob([fontData], { type: 'font/' + ext });
+                    const url = URL.createObjectURL(blob);
+
+                    const fontFace = new FontFace(family, 'url(' + url + ')');
+                    await fontFace.load();
+                    document.fonts.add(fontFace);
+                    URL.revokeObjectURL(url);
+
+                    // Simpan
+                    customFonts.push({
+                        name: file.name,
+                        family: family,
+                        data: buffer.slice(0),
+                        ext: ext
+                    });
+
+                    // Tambahkan ke dropdown
+                    const opt = document.createElement('option');
+                    opt.value = family;
+                    opt.textContent = '📁 ' + file.name;
+                    document.getElementById('customFontOptgroup').appendChild(opt);
+
+                    // Tampilkan di list
+                    const tag = document.createElement('span');
+                    tag.className = 'font-tag';
+                    tag.innerHTML = '📁 ' + file.name +
+                        ' <span class="remove-font" data-family="' + family + '" title="Hapus font">×</span>';
+                    uploadedFontsList.appendChild(tag);
+
+                    // Event hapus
+                    tag.querySelector('.remove-font').addEventListener('click', function(e) {
+                        const f = this.dataset.family;
+                        removeCustomFont(f);
+                    });
+
+                    // Pilih font yang baru
+                    fontFamilySelect.value = family;
+                    showSuccess('Font "' + file.name + '" berhasil diupload!');
+
+                } catch (err) {
+                    console.error(err);
+                    showError('Gagal memuat font: ' + err.message);
+                }
+            }
+
+            function removeCustomFont(family) {
+                const idx = customFonts.findIndex(cf => cf.family === family);
+                if (idx === -1) return;
+                customFonts.splice(idx, 1);
+
+                // Hapus dari dropdown
+                const opt = document.querySelector('#customFontOptgroup option[value="' + family + '"]');
+                if (opt) opt.remove();
+
+                // Hapus dari list
+                const tag = uploadedFontsList.querySelector('.font-tag .remove-font[data-family="' + family + '"]');
+                if (tag) tag.closest('.font-tag').remove();
+
+                showSuccess('Font dihapus.');
+            }
+
+            // ============================================================
+            // PDF DOWNLOAD (dengan teks)
+            // ============================================================
+            async function downloadPDF() {
+                if (!isPdfLoaded || !pdfBytes) {
+                    showError('PDF belum dimuat.');
+                    return;
+                }
+                try {
+                    const pdfLibDoc = await PDFLib.PDFDocument.load(pdfBytes);
+                    const pages = pdfLibDoc.getPages();
+
+                    // Kumpulkan font custom yang dibutuhkan
+                    const usedCustomFonts = [];
+                    for (const obj of objects) {
+                        if (obj.type === 'text') {
+                            const cf = customFonts.find(c => c.family === obj.fontFamily);
+                            if (cf) {
+                                if (!usedCustomFonts.find(u => u.family === cf.family)) {
+                                    usedCustomFonts.push(cf);
+                                }
+                            }
+                        }
+                    }
+
+                    // Embed custom fonts
+                    const embeddedFonts = {};
+                    for (const cf of usedCustomFonts) {
+                        try {
+                            const fontBytes = new Uint8Array(cf.data);
+                            const embedded = await pdfLibDoc.embedFont(fontBytes);
+                            embeddedFonts[cf.family] = embedded;
+                        } catch (e) {
+                            console.warn('Gagal embed font ' + cf.family, e);
+                        }
+                    }
+
+                    for (let i = 0; i < pages.length; i++) {
+                        const page = pages[i];
+                        const pageData = pagesData.find(p => p.pageIndex === i);
+                        if (!pageData) continue;
+
+                        const pw = pageData.pageWidth;
+                        const ph = pageData.pageHeight;
+
+                        for (const obj of objects) {
+                            if (!obj.pageAssignments.includes(i)) continue;
+
+                            if (obj.type === 'image') {
+                                const imageBytes = dataUrlToUint8Array(obj.src);
+                                const mime = getMimeType(obj.src);
+                                let embeddedImage;
+                                if (mime === 'image/png') {
+                                    embeddedImage = await pdfLibDoc.embedPng(imageBytes);
+                                } else if (mime === 'image/jpeg' || mime === 'image/jpg') {
+                                    embeddedImage = await pdfLibDoc.embedJpg(imageBytes);
+                                } else {
+                                    embeddedImage = await pdfLibDoc.embedPng(imageBytes);
+                                }
+                                const x = obj.x;
+                                const y = ph - obj.y - obj.height;
+                                page.drawImage(embeddedImage, { x, y, width: obj.width, height: obj.height });
+
+                            } else if (obj.type === 'text') {
+                                const fontFamily = obj.fontFamily || 'Arial';
+                                let pdfFont = null;
+
+                                // Coba custom font
+                                const cf = customFonts.find(c => c.family === fontFamily);
+                                if (cf && embeddedFonts[cf.family]) {
+                                    pdfFont = embeddedFonts[cf.family];
+                                }
+
+                                // Fallback ke standard font
+                                if (!pdfFont) {
+                                    try {
+                                        pdfFont = await pdfLibDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                                    } catch (_) {
+                                        pdfFont = await pdfLibDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                                    }
+                                }
+
+                                const x = obj.x;
+                                const y = ph - obj.y - obj.height;
+                                const size = obj.fontSize || 28;
+
+                                // Warna
+                                const colorRGB = hexToRgb(obj.textColor || '#2B2B2B');
+                                const color = colorRGB ? PDFLib.rgb(colorRGB.r, colorRGB.g, colorRGB.b) :
+                                    PDFLib.rgb(0.17, 0.17, 0.17);
+
+                                // Background
+                                const bg = obj.bgColor;
+                                if (bg && bg !== 'transparent' && bg !== 'none') {
+                                    const bgRGB = hexToRgb(bg);
+                                    if (bgRGB) {
+                                        page.drawRectangle({
+                                            x: x,
+                                            y: y,
+                                            width: obj.width,
+                                            height: obj.height,
+                                            color: PDFLib.rgb(bgRGB.r, bgRGB.g, bgRGB.b),
+                                        });
+                                    }
+                                }
+
+                                page.drawText(obj.textContent || 'Teks', {
+                                    x: x + 4,
+                                    y: y + 4,
+                                    size: size,
+                                    font: pdfFont,
+                                    color: color,
+                                    maxWidth: obj.width - 8,
+                                    lineHeight: size * 1.3,
+                                });
+
+                            } else {
+                                // Shape
+                                let fillRGB = null,
+                                    strokeRGB = null;
+                                if (obj.fillColor && obj.fillColor !== 'none') {
+                                    const r = hexToRgb(obj.fillColor);
+                                    if (r) fillRGB = PDFLib.rgb(r.r, r.g, r.b);
+                                }
+                                if (obj.strokeColor && obj.strokeColor !== 'none') {
+                                    const r = hexToRgb(obj.strokeColor);
+                                    if (r) strokeRGB = PDFLib.rgb(r.r, r.g, r.b);
+                                }
+                                const sw = obj.strokeWidth || 2;
+                                const x = obj.x;
+                                const y = ph - obj.y - obj.height;
+
+                                switch (obj.type) {
+                                    case 'rect':
+                                    case 'square': {
+                                        const opts = { x, y, width: obj.width, height: obj.height };
+                                        if (fillRGB) opts.color = fillRGB;
+                                        if (strokeRGB) { opts.borderColor = strokeRGB;
+                                            opts.borderWidth = sw; }
+                                        page.drawRectangle(opts);
+                                        break;
+                                    }
+                                    case 'ellipse': {
+                                        const opts = { x: x + obj.width / 2, y: y + obj.height / 2, xScale: obj.width / 2,
+                                            yScale: obj.height / 2 };
+                                        if (fillRGB) opts.color = fillRGB;
+                                        if (strokeRGB) { opts.borderColor = strokeRGB;
+                                            opts.borderWidth = sw; }
+                                        page.drawEllipse(opts);
+                                        break;
+                                    }
+                                    case 'triangle': {
+                                        const opts = {
+                                            x: x + obj.width / 2,
+                                            y: y + obj.height / 2,
+                                            points: [
+                                                { x: 0, y: obj.height / 2 },
+                                                { x: obj.width / 2, y: -obj.height / 2 },
+                                                { x: -obj.width / 2, y: -obj.height / 2 },
+                                            ]
+                                        };
+                                        if (fillRGB) opts.color = fillRGB;
+                                        if (strokeRGB) { opts.borderColor = strokeRGB;
+                                            opts.borderWidth = sw; }
+                                        page.drawPolygon(opts);
+                                        break;
+                                    }
+                                    case 'line': {
+                                        page.drawLine({
+                                            start: { x: x, y: y + obj.height },
+                                            end: { x: x + obj.width, y: y },
+                                            thickness: sw,
+                                            color: strokeRGB || PDFLib.rgb(0, 0, 0)
+                                        });
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    const editedBytes = await pdfLibDoc.save();
+                    const blob = new Blob([editedBytes], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'edited.pdf';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showSuccess('PDF berhasil diunduh!');
+                } catch (err) {
+                    console.error(err);
+                    showError('Gagal menyimpan PDF: ' + err.message);
+                }
+            }
+
+            // ============================================================
+            // UI STATE
+            // ============================================================
+            function updateUIState() {
+                const hasPdf = isPdfLoaded;
+                addImageBtn.disabled = !hasPdf;
+                addShapeBtn.disabled = !hasPdf;
+                addTextBtn.disabled = !hasPdf;
+                shapeTypeSelect.disabled = !hasPdf;
+                applyModeSelect.disabled = !hasPdf;
+                downloadBtn.disabled = !hasPdf;
+                deleteBtn.disabled = !selectedObjectId;
+                customPagesInput.disabled = !hasPdf;
+            }
+
+            // ============================================================
+            // EVENT BINDING
+            // ============================================================
+
+            // PDF upload
+            pdfUploadInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) await loadPDF(file);
+                pdfUploadInput.value = '';
+            });
+
+            // Image
+            addImageBtn.addEventListener('click', () => imageInput.click());
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const dataUrl = ev.target.result;
+                    const page = pagesData[currentPageIndex];
+                    const w = 200,
+                        h = 150;
+                    let x = 100,
+                        y = 100;
+                    if (page) { x = (page.pageWidth - w) / 2;
+                        y = (page.pageHeight - h) / 2; }
+                    createObject('image', { src: dataUrl, x, y, width: w, height: h, pageAssignments: getPageAssignments() });
+                    showSuccess('Gambar ditambahkan');
+                };
+                reader.readAsDataURL(file);
+                imageInput.value = '';
+            });
+
+            // Shape
+            addShapeBtn.addEventListener('click', () => {
+                const type = shapeTypeSelect.value;
+                const page = pagesData[currentPageIndex];
+                let w = 200,
+                    h = 200;
+                if (type === 'rect') h = 150;
+                if (type === 'line') { w = 200;
+                    h = 20; }
+                let x = 100,
+                    y = 100;
+                if (page) { x = (page.pageWidth - w) / 2;
+                    y = (page.pageHeight - h) / 2; }
+                createObject(type, {
+                    x,
+                    y,
+                    width: w,
+                    height: h,
+                    pageAssignments: getPageAssignments(),
+                    fillColor: '#FFB800',
+                    strokeColor: '#2B2B2B',
+                    strokeWidth: 3
+                });
+                showSuccess('Shape ditambahkan');
+            });
+
+            // Text
+            addTextBtn.addEventListener('click', openAddTextModal);
+
+            // Modal events
+            modalCloseBtn.addEventListener('click', closeTextModal);
+            modalCancelBtn.addEventListener('click', closeTextModal);
+            modalAddBtn.addEventListener('click', applyTextFromModal);
+
+            textModal.addEventListener('click', (e) => {
+                if (e.target === textModal) closeTextModal();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeTextModal();
+                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObjectId &&
+                    !e.target.matches('input, textarea, select')) {
+                    deleteObject(selectedObjectId);
+                }
+            });
+
+            // Color picker sync
+            textColorPicker.addEventListener('input', () => {
+                textColorHex.textContent = textColorPicker.value;
+            });
+            bgColorPicker.addEventListener('input', () => {
+                bgColorHex.textContent = bgColorPicker.value;
+                bgNoneBtn.classList.remove('active');
+            });
+            bgNoneBtn.addEventListener('click', () => {
+                bgNoneBtn.classList.toggle('active');
+                if (bgNoneBtn.classList.contains('active')) {
+                    bgColorPicker.value = '#F3F3E8';
+                    bgColorHex.textContent = '#F3F3E8';
+                }
+            });
+
+            // Font upload
+            fontUploadBtn.addEventListener('click', () => {
+                fontUploadInput.click();
+            });
+            fontUploadInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    await uploadCustomFont(file);
+                    fontUploadInput.value = '';
+                }
+            });
+
+            // Apply mode
+            applyModeSelect.addEventListener('change', () => {
+                customPagesInput.classList.toggle('visible', applyModeSelect.value === 'custom');
+            });
+
+            // Delete
+            deleteBtn.addEventListener('click', () => {
+                if (selectedObjectId) deleteObject(selectedObjectId);
+            });
+
+            // Download
+            downloadBtn.addEventListener('click', downloadPDF);
+
+            // ============================================================
+            // DRAG & DROP
+            // ============================================================
+            let dragCounter = 0;
+            window.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                dragCounter++;
+                if (dragCounter === 1) dropZone.classList.add('active');
+            });
+            window.addEventListener('dragover', (e) => e.preventDefault());
+            window.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dragCounter--;
+                if (dragCounter === 0) dropZone.classList.remove('active');
+            });
+            window.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                dragCounter = 0;
+                dropZone.classList.remove('active');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.type === 'application/pdf') {
+                        await loadPDF(file);
+                    } else {
+                        showError('Harap letakkan file PDF.');
+                    }
+                }
+            });
+
+            // ============================================================
+            // INIT
+            // ============================================================
+            updateUIState();
+            showToast('📄 Seret PDF atau klik "Choose File"', 2500);
+
+            // Perbaiki custom font optgroup jika sudah ada custom font dari sebelumnya
+            // (tidak ada di initial state)
+
+            console.log('📄 PDF Editor Pro siap!');
+        })();
+    </script>
+</body>
+</html>

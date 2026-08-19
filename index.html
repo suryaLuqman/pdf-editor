@@ -2,17 +2,17 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
     <title>PDF Editor Pro</title>
 
-    <!-- Google Fonts (preload untuk akses cepat) -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Oswald:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
 
     <style>
         /* ============================================================
-                   VARIABEL CSS – Classic Enterprise UI
+                   VARIABEL – Classic Enterprise UI
                    ============================================================ */
         :root {
             --primary-grey: #5A5959;
@@ -22,21 +22,17 @@
             --row-hover: #FEE79B;
             --text-main: #2B2B2B;
             --text-header: #000000;
-
             --toolbar-bg: var(--primary-grey);
             --toolbar-text: #ffffff;
             --accent: var(--accent-gold);
             --accent-hover: #e6a600;
             --danger: #c0392b;
-            --page-bg: var(--primary-beige);
             --page-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
             --border-radius: 8px;
             --font-base: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --toolbar-height: 58px;
         }
 
-        /* ============================================================
-                   RESET & GLOBAL
-                   ============================================================ */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -51,75 +47,102 @@
             flex-direction: column;
             align-items: center;
             color: var(--text-main);
+            padding-top: var(--toolbar-height);
         }
 
         /* ============================================================
-                   TOOLBAR
+                   TOOLBAR – Responsive
                    ============================================================ */
         #toolbar {
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
-            width: 100%;
             background: var(--toolbar-bg);
             color: #fff;
-            padding: 10px 16px;
+            padding: 6px 10px;
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             align-items: center;
-            gap: 6px 12px;
+            gap: 4px 6px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.30);
-            transition: all 0.2s;
+            height: var(--toolbar-height);
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        #toolbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        #toolbar .toolbar-inner {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 4px 8px;
+            flex-shrink: 0;
         }
 
         #toolbar h1 {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-right: 8px;
             white-space: nowrap;
-            letter-spacing: 0.3px;
             color: #fff;
+            margin-right: 4px;
+            flex-shrink: 0;
+        }
+        #toolbar h1 span {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.7;
+            display: inline-block;
+            margin-left: 2px;
         }
 
-        #toolbar .sep {
+        .tb-sep {
             width: 1px;
-            height: 28px;
-            background: rgba(255, 255, 255, 0.25);
+            height: 26px;
+            background: rgba(255, 255, 255, 0.20);
             flex-shrink: 0;
+            margin: 0 2px;
         }
 
         .toolbar-group {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             align-items: center;
-            gap: 4px 8px;
+            gap: 3px 5px;
+            flex-shrink: 0;
         }
 
         .toolbar-group label {
-            font-size: 0.75rem;
+            font-size: 0.6rem;
             white-space: nowrap;
-            opacity: 0.85;
+            opacity: 0.8;
             font-weight: 500;
-            letter-spacing: 0.2px;
             color: #fff;
+            display: none;
         }
 
         #toolbar button,
         #toolbar select,
         #toolbar input[type="file"],
         #toolbar input[type="text"],
-        #toolbar input[type="color"],
         #toolbar input[type="number"] {
-            padding: 5px 10px;
+            padding: 4px 8px;
             border: none;
-            border-radius: var(--border-radius);
-            font-size: 0.8rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
             cursor: pointer;
-            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+            transition: background 0.15s, transform 0.1s;
             font-family: inherit;
             background: #fff;
             color: var(--text-main);
             border: 1px solid var(--border-grey);
+            height: 30px;
+            white-space: nowrap;
         }
 
         #toolbar button {
@@ -127,120 +150,206 @@
             color: var(--text-header);
             font-weight: 600;
             border: none;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 0 10px;
         }
-
         #toolbar button:hover {
             background: var(--accent-hover);
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(255, 184, 0, 0.35);
         }
-
-        #toolbar button:active {
-            transform: translateY(0);
-        }
-
         #toolbar button:disabled {
             background: #b0a9a9;
             color: #555;
             cursor: not-allowed;
             transform: none !important;
-            box-shadow: none !important;
+        }
+        #toolbar button .btn-icon {
+            font-size: 0.9rem;
+        }
+        #toolbar button .btn-label {
+            font-size: 0.65rem;
         }
 
         #toolbar select {
             background: #fff;
-            min-width: 100px;
+            min-width: 70px;
             cursor: pointer;
-            border: 1px solid var(--border-grey);
+            height: 30px;
+            font-size: 0.65rem;
+            padding: 0 6px;
         }
-
         #toolbar select:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
 
         #toolbar input[type="file"] {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.10);
             color: #fff;
-            border: 1px dashed rgba(255, 255, 255, 0.35);
-            padding: 4px 8px;
-            max-width: 140px;
-            font-size: 0.75rem;
+            border: 1px dashed rgba(255, 255, 255, 0.30);
+            padding: 2px 6px;
+            max-width: 100px;
+            font-size: 0.6rem;
+            height: 28px;
         }
-
         #toolbar input[type="file"]::file-selector-button {
             background: var(--accent);
             color: var(--text-header);
             border: none;
             border-radius: 4px;
-            padding: 2px 10px;
+            padding: 0 8px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.75rem;
-        }
-
-        #toolbar input[type="file"]::file-selector-button:hover {
-            background: var(--accent-hover);
+            font-size: 0.6rem;
+            height: 24px;
         }
 
         #toolbar input[type="text"],
         #toolbar input[type="number"] {
-            width: 70px;
-            padding: 4px 6px;
-            font-size: 0.8rem;
-            border: 1px solid var(--border-grey);
+            width: 60px;
+            padding: 2px 4px;
+            font-size: 0.65rem;
+            height: 28px;
             background: #fff;
             color: var(--text-main);
+            border: 1px solid var(--border-grey);
         }
-
-        #toolbar input[type="color"] {
-            width: 32px;
-            height: 32px;
-            padding: 2px;
-            border-radius: 50%;
-            border: 2px solid var(--border-grey);
-            cursor: pointer;
-            background: #fff;
-        }
-
-        #toolbar input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-
-        #toolbar input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 50%;
-        }
-
         #customPages {
-            width: 90px;
+            width: 60px;
             display: none;
         }
-
         #customPages.visible {
             display: inline-block;
         }
 
-        /* tombol aksesori */
         .btn-ghost {
             background: rgba(255, 255, 255, 0.10) !important;
             color: #fff !important;
             border: 1px solid rgba(255, 255, 255, 0.20) !important;
         }
-
         .btn-ghost:hover {
             background: rgba(255, 255, 255, 0.20) !important;
-            transform: translateY(-1px);
         }
-
         .btn-danger {
             background: var(--danger) !important;
             color: #fff !important;
             border: none !important;
         }
-
         .btn-danger:hover {
             background: #a93226 !important;
+        }
+        .btn-sm {
+            padding: 0 6px !important;
+            font-size: 0.6rem !important;
+            height: 26px !important;
+        }
+        .btn-icon-only {
+            padding: 0 6px !important;
+            min-width: 30px !important;
+            justify-content: center !important;
+        }
+
+        /* Page nav */
+        .page-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .page-nav button {
+            background: rgba(255, 255, 255, 0.12) !important;
+            color: #fff !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            padding: 0 6px !important;
+            height: 26px !important;
+            font-size: 0.7rem !important;
+            min-width: 28px;
+        }
+        .page-nav button:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+        }
+        .page-nav .page-counter {
+            font-size: 0.65rem;
+            color: #fff;
+            padding: 0 4px;
+            min-width: 40px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Add page dropdown */
+        .add-page-group {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .add-page-group .add-page-options {
+            display: none;
+            position: absolute;
+            top: 34px;
+            left: 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            padding: 6px 0;
+            min-width: 160px;
+            z-index: 50;
+            flex-direction: column;
+            border: 1px solid var(--border-grey);
+        }
+        .add-page-group .add-page-options.open {
+            display: flex;
+        }
+        .add-page-group .add-page-options button {
+            background: none !important;
+            color: var(--text-main) !important;
+            border: none !important;
+            padding: 6px 14px !important;
+            text-align: left;
+            font-weight: 400 !important;
+            font-size: 0.75rem !important;
+            height: auto !important;
+            border-radius: 0 !important;
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .add-page-group .add-page-options button:hover {
+            background: var(--row-hover) !important;
+        }
+        .add-page-group .add-page-options .opt-sep {
+            height: 1px;
+            background: var(--border-grey);
+            margin: 4px 10px;
+        }
+        .add-page-group .add-page-options .opt-label {
+            padding: 4px 14px;
+            font-size: 0.6rem;
+            color: #888;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .add-page-group .add-page-options .orientation-row {
+            display: flex;
+            gap: 6px;
+            padding: 4px 14px 8px;
+        }
+        .add-page-group .add-page-options .orientation-row button {
+            flex: 1;
+            text-align: center !important;
+            justify-content: center !important;
+            background: var(--primary-beige) !important;
+            border: 1px solid var(--border-grey) !important;
+            border-radius: 4px !important;
+            padding: 4px 8px !important;
+            font-size: 0.6rem !important;
+            color: var(--text-main) !important;
+        }
+        .add-page-group .add-page-options .orientation-row button.active {
+            border-color: var(--accent-gold) !important;
+            background: var(--row-hover) !important;
         }
 
         /* ============================================================
@@ -262,17 +371,15 @@
             transition: opacity 0.25s;
             backdrop-filter: blur(4px);
         }
-
         #dropZone.active {
             opacity: 1;
             pointer-events: auto;
         }
-
         #dropZone .drop-message {
             background: #fff;
-            padding: 32px 56px;
+            padding: 24px 40px;
             border-radius: 20px;
-            font-size: 1.6rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-header);
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.30);
@@ -280,16 +387,16 @@
         }
 
         /* ============================================================
-                   PAGES CONTAINER
+                   PAGES
                    ============================================================ */
         #pagesContainer {
             width: 100%;
             max-width: 1200px;
-            padding: 20px;
+            padding: 12px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 24px;
+            gap: 16px;
         }
 
         .page-container {
@@ -300,13 +407,12 @@
             overflow: hidden;
             transition: outline 0.2s, box-shadow 0.2s;
             outline: 3px solid transparent;
+            max-width: 100%;
         }
-
         .page-container.active {
             outline: 3px solid var(--accent-gold);
             box-shadow: 0 4px 20px rgba(255, 184, 0, 0.30);
         }
-
         .page-container canvas {
             display: block;
             width: 100%;
@@ -321,7 +427,6 @@
             width: 100%;
             height: 100%;
         }
-
         .overlay .object-item {
             pointer-events: auto;
             cursor: move;
@@ -330,7 +435,6 @@
             user-select: none;
             -webkit-user-select: none;
         }
-
         .object-item img {
             pointer-events: none;
             width: 100%;
@@ -338,32 +442,25 @@
             display: block;
             object-fit: fill;
         }
-
         .object-item.selected {
             outline: 2px dashed var(--danger);
             outline-offset: 2px;
         }
-
-        /* --- Text object --- */
         .object-item.text-object {
             cursor: move;
-            padding: 4px 6px;
+            padding: 2px 4px;
             border-radius: 2px;
             min-width: 20px;
             min-height: 20px;
             white-space: pre-wrap;
             word-break: break-word;
             line-height: 1.3;
-            font-weight: 400;
-            transition: outline 0.15s;
         }
-
         .object-item.text-object.selected {
             outline: 2px dashed var(--danger);
             outline-offset: 2px;
         }
 
-        /* --- Resize handles --- */
         .resize-handle {
             position: absolute;
             width: 14px;
@@ -375,46 +472,26 @@
             pointer-events: auto;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
         }
+        .resize-handle.nw { top: -7px; left: -7px; cursor: nwse-resize; }
+        .resize-handle.ne { top: -7px; right: -7px; cursor: nesw-resize; }
+        .resize-handle.sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
+        .resize-handle.se { bottom: -7px; right: -7px; cursor: nwse-resize; }
 
-        .resize-handle.nw {
-            top: -7px;
-            left: -7px;
-            cursor: nwse-resize;
-        }
-        .resize-handle.ne {
-            top: -7px;
-            right: -7px;
-            cursor: nesw-resize;
-        }
-        .resize-handle.sw {
-            bottom: -7px;
-            left: -7px;
-            cursor: nesw-resize;
-        }
-        .resize-handle.se {
-            bottom: -7px;
-            right: -7px;
-            cursor: nwse-resize;
-        }
-
-        /* ============================================================
-                   EMPTY STATE
-                   ============================================================ */
         .empty-state {
             text-align: center;
             color: #7f8c8d;
-            font-size: 1.2rem;
-            padding: 60px 20px;
+            font-size: 1rem;
+            padding: 40px 20px;
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
             border: 2px dashed var(--border-grey);
         }
 
         /* ============================================================
-                   MODAL (Teks)
+                   MODAL TEKS
                    ============================================================ */
         .modal-overlay {
             position: fixed;
@@ -431,243 +508,180 @@
             pointer-events: none;
             transition: opacity 0.25s ease;
             backdrop-filter: blur(3px);
-            padding: 16px;
+            padding: 12px;
         }
-
         .modal-overlay.active {
             opacity: 1;
             pointer-events: auto;
         }
-
         .modal-box {
             background: #fff;
             border-radius: 16px;
-            max-width: 720px;
+            max-width: 680px;
             width: 100%;
-            max-height: 92vh;
+            max-height: 94vh;
             overflow-y: auto;
-            padding: 28px 32px 32px;
+            padding: 20px 22px 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-            position: relative;
             animation: modalIn 0.25s ease;
         }
-
         @keyframes modalIn {
-            from {
-                transform: scale(0.95) translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
+            from { transform: scale(0.95) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
         }
-
         .modal-box h2 {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-header);
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-
         .modal-box h2 small {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 400;
-            color: #777;
+            color: #888;
             margin-left: auto;
         }
-
         .modal-close {
             position: absolute;
-            top: 16px;
-            right: 20px;
+            top: 12px;
+            right: 16px;
             background: none;
             border: none;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             cursor: pointer;
             color: #999;
-            line-height: 1;
-            transition: color 0.15s;
         }
-
-        .modal-close:hover {
-            color: var(--text-header);
-        }
-
+        .modal-close:hover { color: var(--text-header); }
         .modal-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px 20px;
+            gap: 10px 16px;
         }
-
-        .modal-grid .full-width {
-            grid-column: 1 / -1;
-        }
-
+        .modal-grid .full-width { grid-column: 1 / -1; }
         .modal-field {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
-
         .modal-field label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--text-main);
-            letter-spacing: 0.2px;
         }
-
         .modal-field textarea,
         .modal-field select,
         .modal-field input[type="number"],
         .modal-field input[type="text"] {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1.5px solid var(--border-grey);
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-family: inherit;
-            transition: border 0.15s, box-shadow 0.15s;
+            transition: border 0.15s;
             background: #fff;
             color: var(--text-main);
             width: 100%;
         }
-
         .modal-field textarea {
             resize: vertical;
-            min-height: 60px;
-            font-family: inherit;
+            min-height: 50px;
         }
-
         .modal-field textarea:focus,
         .modal-field select:focus,
         .modal-field input:focus {
             outline: none;
             border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.20);
+            box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.15);
         }
-
         .modal-field .color-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
-
         .modal-field .color-row input[type="color"] {
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             padding: 2px;
             border-radius: 8px;
             border: 2px solid var(--border-grey);
             cursor: pointer;
-            background: #fff;
             flex-shrink: 0;
         }
-
-        .modal-field .color-row input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-
-        .modal-field .color-row input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 6px;
-        }
-
         .modal-field .color-row .color-hex {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-family: monospace;
             color: #555;
         }
-
         .modal-field .color-row .bg-none-btn {
-            padding: 4px 14px;
+            padding: 2px 12px;
             border: 1.5px solid var(--border-grey);
             border-radius: 6px;
             background: #fff;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 500;
             transition: all 0.15s;
             color: var(--text-main);
+            height: 28px;
         }
-
         .modal-field .color-row .bg-none-btn.active {
             border-color: var(--accent-gold);
             background: var(--row-hover);
         }
-
-        .modal-field .color-row .bg-none-btn:hover {
-            border-color: var(--accent-gold);
-        }
-
-        /* Font upload area */
         .font-upload-area {
             border: 2px dashed var(--border-grey);
             border-radius: 10px;
-            padding: 16px 18px;
+            padding: 12px 14px;
             background: var(--primary-beige);
-            transition: border 0.2s, background 0.2s;
         }
-
-        .font-upload-area:hover {
-            border-color: var(--accent-gold);
-            background: #f8f8ee;
-        }
-
         .font-upload-area .upload-row {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-
         .font-upload-area .upload-row input[type="file"] {
             flex: 1;
-            min-width: 140px;
-            font-size: 0.75rem;
+            min-width: 100px;
+            font-size: 0.65rem;
+            padding: 2px 4px;
+            border: none;
+            background: transparent;
         }
-
         .font-upload-area .upload-info {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: #777;
-            margin-top: 6px;
-            line-height: 1.5;
+            margin-top: 4px;
         }
-
-        .font-upload-area .upload-info strong {
-            color: var(--text-main);
-        }
-
         .font-upload-area .uploaded-fonts {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
+            gap: 4px;
+            margin-top: 6px;
         }
-
         .font-upload-area .uploaded-fonts .font-tag {
             background: #fff;
             border: 1px solid var(--border-grey);
-            border-radius: 20px;
-            padding: 2px 12px;
-            font-size: 0.7rem;
+            border-radius: 16px;
+            padding: 0 10px;
+            font-size: 0.6rem;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             color: var(--text-main);
+            height: 22px;
         }
-
         .font-upload-area .uploaded-fonts .font-tag .remove-font {
             cursor: pointer;
             color: #999;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             line-height: 1;
         }
-
         .font-upload-area .uploaded-fonts .font-tag .remove-font:hover {
             color: var(--danger);
         }
@@ -675,168 +689,366 @@
         .modal-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 12px;
-            margin-top: 22px;
-            padding-top: 16px;
+            gap: 10px;
+            margin-top: 18px;
+            padding-top: 14px;
             border-top: 1px solid var(--border-grey);
+            flex-wrap: wrap;
         }
-
         .modal-actions button {
-            padding: 8px 24px;
+            padding: 6px 20px;
             border: none;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.15s;
             font-family: inherit;
         }
-
         .modal-actions .btn-primary {
             background: var(--accent-gold);
             color: var(--text-header);
         }
-
         .modal-actions .btn-primary:hover {
             background: var(--accent-hover);
             transform: translateY(-1px);
-            box-shadow: 0 4px 14px rgba(255, 184, 0, 0.35);
         }
-
         .modal-actions .btn-secondary {
             background: var(--border-grey);
             color: var(--text-main);
         }
-
         .modal-actions .btn-secondary:hover {
             background: #cbcbc4;
         }
 
         /* ============================================================
-                   RESPONSIVE
+                   TOAST
+                   ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--primary-grey);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            max-width: 92%;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============================================================
+                   RESPONSIVE – Mobile First
                    ============================================================ */
         @media (max-width: 820px) {
+            :root {
+                --toolbar-height: 52px;
+            }
             #toolbar {
-                padding: 8px 12px;
-                gap: 4px 8px;
+                padding: 4px 6px;
+                gap: 2px 4px;
+                height: var(--toolbar-height);
             }
-
             #toolbar h1 {
-                font-size: 1rem;
-                margin-right: 4px;
+                font-size: 0.8rem;
             }
-
-            #toolbar .sep {
-                height: 20px;
+            #toolbar h1 span {
+                display: none;
             }
-
             #toolbar button,
             #toolbar select,
             #toolbar input[type="file"],
             #toolbar input[type="text"],
             #toolbar input[type="number"] {
-                font-size: 0.7rem;
-                padding: 4px 8px;
+                font-size: 0.6rem;
+                padding: 2px 6px;
+                height: 26px;
             }
-
-            #toolbar input[type="file"] {
-                max-width: 100px;
-                font-size: 0.65rem;
-            }
-
-            .modal-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-box {
-                padding: 20px 18px;
-                max-width: 100%;
-            }
-
-            #pagesContainer {
-                padding: 12px;
-            }
-        }
-
-        @media (max-width: 500px) {
-            #toolbar {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 6px;
-            }
-
-            #toolbar .toolbar-group {
-                flex-wrap: wrap;
-                justify-content: flex-start;
-            }
-
-            #toolbar .sep {
+            #toolbar button .btn-label {
                 display: none;
             }
-
+            #toolbar button .btn-icon {
+                font-size: 0.9rem;
+            }
+            #toolbar button.btn-sm {
+                padding: 0 4px !important;
+                min-width: 26px !important;
+                height: 24px !important;
+            }
+            #toolbar select {
+                min-width: 50px;
+                font-size: 0.55rem;
+                padding: 0 4px;
+                height: 24px;
+            }
             #toolbar input[type="file"] {
-                max-width: 100%;
+                max-width: 70px;
+                font-size: 0.5rem;
+                height: 24px;
+                padding: 0 4px;
             }
-
+            #toolbar input[type="file"]::file-selector-button {
+                font-size: 0.5rem;
+                height: 20px;
+                padding: 0 6px;
+            }
+            #toolbar input[type="text"],
+            #toolbar input[type="number"] {
+                width: 40px;
+                font-size: 0.55rem;
+                height: 24px;
+                padding: 0 3px;
+            }
+            #customPages {
+                width: 40px;
+            }
+            .tb-sep {
+                height: 20px;
+                margin: 0 1px;
+            }
+            .page-nav .page-counter {
+                font-size: 0.55rem;
+                min-width: 28px;
+            }
+            .page-nav button {
+                height: 24px !important;
+                min-width: 24px !important;
+                font-size: 0.6rem !important;
+                padding: 0 4px !important;
+            }
+            .add-page-group .add-page-options {
+                min-width: 140px;
+                left: -20px;
+            }
+            .add-page-group .add-page-options button {
+                font-size: 0.65rem !important;
+                padding: 4px 12px !important;
+            }
             .modal-box {
-                padding: 16px 14px;
+                padding: 16px 14px 18px;
+                max-width: 100%;
+                margin: 8px;
+                max-height: 90vh;
             }
-
+            .modal-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
             .modal-actions {
                 flex-direction: column;
             }
-
             .modal-actions button {
                 width: 100%;
+                justify-content: center;
+            }
+            #pagesContainer {
+                padding: 8px 8px;
+                gap: 12px;
+            }
+            .empty-state {
+                font-size: 0.85rem;
+                padding: 30px 16px;
+            }
+            .page-container {
+                border-radius: 2px;
+            }
+            .page-container.active {
+                outline-width: 2px;
+            }
+            .resize-handle {
+                width: 12px;
+                height: 12px;
+            }
+            .resize-handle.nw { top: -6px; left: -6px; }
+            .resize-handle.ne { top: -6px; right: -6px; }
+            .resize-handle.sw { bottom: -6px; left: -6px; }
+            .resize-handle.se { bottom: -6px; right: -6px; }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --toolbar-height: 48px;
+            }
+            #toolbar {
+                padding: 2px 4px;
+                gap: 1px 3px;
+                height: var(--toolbar-height);
+                overflow-x: auto;
+            }
+            #toolbar h1 {
+                font-size: 0.7rem;
+                margin-right: 2px;
+            }
+            #toolbar button {
+                padding: 0 4px !important;
+                min-width: 24px !important;
+                height: 22px !important;
+                font-size: 0.55rem !important;
+            }
+            #toolbar button .btn-icon {
+                font-size: 0.7rem;
+            }
+            #toolbar select {
+                min-width: 36px;
+                font-size: 0.5rem;
+                height: 20px;
+                padding: 0 2px;
+            }
+            #toolbar input[type="file"] {
+                max-width: 50px;
+                font-size: 0.45rem;
+                height: 20px;
+                padding: 0 2px;
+            }
+            #toolbar input[type="file"]::file-selector-button {
+                font-size: 0.45rem;
+                height: 18px;
+                padding: 0 4px;
+            }
+            #toolbar input[type="text"],
+            #toolbar input[type="number"] {
+                width: 30px;
+                font-size: 0.5rem;
+                height: 20px;
+                padding: 0 2px;
+            }
+            #customPages {
+                width: 30px;
+            }
+            .tb-sep {
+                height: 16px;
+                margin: 0 1px;
+            }
+            .page-nav .page-counter {
+                font-size: 0.5rem;
+                min-width: 20px;
+            }
+            .page-nav button {
+                height: 20px !important;
+                min-width: 20px !important;
+                font-size: 0.5rem !important;
+                padding: 0 2px !important;
+            }
+            .add-page-group .add-page-options {
+                min-width: 120px;
+                left: -30px;
+            }
+            .add-page-group .add-page-options button {
+                font-size: 0.6rem !important;
+                padding: 3px 10px !important;
+            }
+            .modal-box {
+                padding: 12px 10px 14px;
+                margin: 4px;
+                border-radius: 12px;
+            }
+            .modal-box h2 {
+                font-size: 0.9rem;
+            }
+            .modal-box h2 small {
+                font-size: 0.55rem;
+            }
+            .modal-field label {
+                font-size: 0.6rem;
+            }
+            .modal-field textarea,
+            .modal-field select,
+            .modal-field input {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+            .modal-field .color-row input[type="color"] {
+                width: 32px;
+                height: 32px;
+            }
+            .modal-actions button {
+                font-size: 0.75rem;
+                padding: 5px 14px;
+            }
+            .font-upload-area .upload-row input[type="file"] {
+                min-width: 60px;
+                font-size: 0.5rem;
+            }
+            #pagesContainer {
+                padding: 4px 4px;
+                gap: 8px;
+            }
+            .empty-state {
+                font-size: 0.75rem;
+                padding: 20px 12px;
+            }
+            .toast {
+                font-size: 0.75rem;
+                padding: 8px 16px;
+                bottom: 12px;
+                max-width: 96%;
             }
         }
 
         /* ============================================================
                    SCROLLBAR MODAL
                    ============================================================ */
-        .modal-box::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .modal-box::-webkit-scrollbar-track {
-            background: var(--primary-beige);
-        }
-
-        .modal-box::-webkit-scrollbar-thumb {
-            background: var(--border-grey);
-            border-radius: 10px;
-        }
-
-        .modal-box::-webkit-scrollbar-thumb:hover {
-            background: #b0b0a8;
-        }
+        .modal-box::-webkit-scrollbar { width: 4px; }
+        .modal-box::-webkit-scrollbar-track { background: var(--primary-beige); }
+        .modal-box::-webkit-scrollbar-thumb { background: var(--border-grey); border-radius: 10px; }
 
         /* ============================================================
-                   TOAST / NOTIF
+                   CONTEXT MENU (layer ordering)
                    ============================================================ */
-        .toast {
+        .context-menu {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary-grey);
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
-            pointer-events: none;
-            max-width: 90%;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            padding: 4px 0;
+            min-width: 140px;
+            z-index: 400;
+            border: 1px solid var(--border-grey);
+            display: none;
+            overflow: hidden;
         }
-
-        .toast.show {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateX(-50%) translateY(0);
+        .context-menu.open {
+            display: block;
+        }
+        .context-menu button {
+            background: none;
+            border: none;
+            padding: 6px 16px;
+            width: 100%;
+            text-align: left;
+            font-size: 0.8rem;
+            font-family: inherit;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: background 0.1s;
+        }
+        .context-menu button:hover {
+            background: var(--row-hover);
+        }
+        .context-menu .cm-sep {
+            height: 1px;
+            background: var(--border-grey);
+            margin: 4px 10px;
+        }
+        .context-menu .cm-label {
+            padding: 4px 16px;
+            font-size: 0.6rem;
+            color: #888;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -844,50 +1056,102 @@
 
     <!-- ======== TOOLBAR ======== -->
     <div id="toolbar">
-        <h1>📄 PDF Editor</h1>
+        <div class="toolbar-inner">
+            <h1>📄 PDF<span>Pro</span></h1>
 
-        <div class="toolbar-group">
-            <input type="file" id="pdfUpload" accept="application/pdf" title="Unggah PDF" />
-        </div>
+            <!-- Upload -->
+            <div class="toolbar-group">
+                <input type="file" id="pdfUpload" accept="application/pdf" title="Unggah PDF" />
+            </div>
 
-        <span class="sep"></span>
+            <span class="tb-sep"></span>
 
-        <div class="toolbar-group">
-            <button id="addImageBtn" disabled>🖼️ Gambar</button>
-            <input type="file" id="imageInput" accept="image/*" style="display:none" />
-        </div>
+            <!-- Add Image -->
+            <div class="toolbar-group">
+                <button id="addImageBtn" disabled title="Tambah Gambar"><span class="btn-icon">🖼️</span><span class="btn-label">Gambar</span></button>
+                <input type="file" id="imageInput" accept="image/*" style="display:none" />
+            </div>
 
-        <span class="sep"></span>
+            <span class="tb-sep"></span>
 
-        <div class="toolbar-group">
-            <select id="shapeType" disabled>
-                <option value="rect">Persegi Panjang</option>
-                <option value="square">Persegi</option>
-                <option value="ellipse">Lingkaran</option>
-                <option value="triangle">Segitiga</option>
-                <option value="line">Garis</option>
-            </select>
-            <button id="addShapeBtn" disabled>🔷 Shape</button>
-        </div>
+            <!-- Shape -->
+            <div class="toolbar-group">
+                <select id="shapeType" disabled>
+                    <option value="rect">Persegi</option>
+                    <option value="square">Kotak</option>
+                    <option value="ellipse">Lingkaran</option>
+                    <option value="triangle">Segitiga</option>
+                    <option value="line">Garis</option>
+                </select>
+                <button id="addShapeBtn" disabled title="Tambah Shape"><span class="btn-icon">🔷</span><span class="btn-label">Shape</span></button>
+            </div>
 
-        <span class="sep"></span>
+            <span class="tb-sep"></span>
 
-        <!-- ====== TEXT GROUP ====== -->
-        <div class="toolbar-group">
-            <button id="addTextBtn" disabled class="btn-ghost" style="background:rgba(255,255,255,0.12)!important;">✏️ Teks</button>
-        </div>
+            <!-- Text -->
+            <div class="toolbar-group">
+                <button id="addTextBtn" disabled class="btn-ghost" title="Tambah Teks"><span class="btn-icon">✏️</span><span class="btn-label">Teks</span></button>
+            </div>
 
-        <span class="sep"></span>
+            <span class="tb-sep"></span>
 
-        <div class="toolbar-group">
-            <select id="applyMode" disabled>
-                <option value="all">Semua Halaman</option>
-                <option value="current">Halaman Ini</option>
-                <option value="custom">Halaman Kustom</option>
-            </select>
-            <input type="text" id="customPages" placeholder="1,3,5" />
-            <button id="deleteBtn" disabled class="btn-danger">🗑️ Hapus</button>
-            <button id="downloadBtn" disabled style="background:#2c7a3e;color:#fff;">💾 Download</button>
+            <!-- Page Navigation -->
+            <div class="toolbar-group page-nav">
+                <button id="pagePrevBtn" disabled title="Halaman Sebelumnya">◀</button>
+                <span class="page-counter" id="pageCounter">0 / 0</span>
+                <button id="pageNextBtn" disabled title="Halaman Berikutnya">▶</button>
+            </div>
+
+            <span class="tb-sep"></span>
+
+            <!-- Add Page -->
+            <div class="toolbar-group add-page-group">
+                <button id="addPageBtn" disabled class="btn-ghost" title="Tambah Halaman"><span class="btn-icon">📄</span><span class="btn-label">+ Halaman</span></button>
+                <div class="add-page-options" id="addPageOptions">
+                    <div class="opt-label">Tambah Halaman</div>
+                    <button data-where="before">⬆ Sebelum halaman ini</button>
+                    <button data-where="after">⬇ Setelah halaman ini</button>
+                    <button data-where="end">⏹ Di akhir</button>
+                    <div class="opt-sep"></div>
+                    <div class="opt-label">Orientasi</div>
+                    <div class="orientation-row">
+                        <button data-orient="portrait" class="active">📱 Portrait</button>
+                        <button data-orient="landscape">🖥 Landscape</button>
+                    </div>
+                </div>
+            </div>
+
+            <span class="tb-sep"></span>
+
+            <!-- Delete Page -->
+            <div class="toolbar-group">
+                <button id="deletePageBtn" disabled class="btn-danger" title="Hapus Halaman"><span class="btn-icon">🗑️</span><span class="btn-label">Hapus</span></button>
+            </div>
+
+            <span class="tb-sep"></span>
+
+            <!-- Apply mode -->
+            <div class="toolbar-group" style="display:none;">
+                <select id="applyMode" disabled>
+                    <option value="all">Semua</option>
+                    <option value="current">Halaman Ini</option>
+                    <option value="custom">Kustom</option>
+                </select>
+                <input type="text" id="customPages" placeholder="1,3,5" />
+            </div>
+
+            <!-- Layer Ordering -->
+            <div class="toolbar-group">
+                <button id="bringForwardBtn" disabled class="btn-sm" title="Bawa ke Depan">⬆</button>
+                <button id="sendBackwardBtn" disabled class="btn-sm" title="Kirim ke Belakang">⬇</button>
+            </div>
+
+            <span class="tb-sep"></span>
+
+            <!-- Download -->
+            <div class="toolbar-group">
+                <button id="downloadBtn" disabled style="background:#2c7a3e;color:#fff;"><span class="btn-icon">💾</span><span class="btn-label">Download</span></button>
+            </div>
         </div>
     </div>
 
@@ -906,15 +1170,11 @@
         <div class="modal-box">
             <button class="modal-close" id="modalCloseBtn">&times;</button>
             <h2>✏️ Tambah Teks <small>atur gaya &amp; font</small></h2>
-
             <div class="modal-grid">
-                <!-- Konten -->
                 <div class="modal-field full-width">
                     <label for="textContent">Teks</label>
                     <textarea id="textContent" rows="3" placeholder="Ketik teks di sini…"></textarea>
                 </div>
-
-                <!-- Font Family -->
                 <div class="modal-field">
                     <label for="fontFamilySelect">Font Family</label>
                     <select id="fontFamilySelect">
@@ -926,9 +1186,6 @@
                             <option value="Verdana">Verdana</option>
                             <option value="Tahoma">Tahoma</option>
                             <option value="'Courier New'">Courier New</option>
-                            <option value="Impact">Impact</option>
-                            <option value="'Comic Sans MS'">Comic Sans MS</option>
-                            <option value="'Trebuchet MS'">Trebuchet MS</option>
                             <option value="'Segoe UI'">Segoe UI</option>
                         </optgroup>
                         <optgroup label="Google Fonts">
@@ -943,19 +1200,13 @@
                             <option value="'Playfair Display'">Playfair Display</option>
                             <option value="'Merriweather'">Merriweather</option>
                         </optgroup>
-                        <optgroup label="Custom" id="customFontOptgroup">
-                            <!-- diisi lewat JS -->
-                        </optgroup>
+                        <optgroup label="Custom" id="customFontOptgroup"></optgroup>
                     </select>
                 </div>
-
-                <!-- Ukuran -->
                 <div class="modal-field">
                     <label for="fontSizeInput">Ukuran (px)</label>
                     <input type="number" id="fontSizeInput" value="28" min="8" max="300" step="1" />
                 </div>
-
-                <!-- Warna Teks -->
                 <div class="modal-field">
                     <label>Warna Teks</label>
                     <div class="color-row">
@@ -963,8 +1214,6 @@
                         <span class="color-hex" id="textColorHex">#2B2B2B</span>
                     </div>
                 </div>
-
-                <!-- Warna Background -->
                 <div class="modal-field">
                     <label>Warna Background</label>
                     <div class="color-row">
@@ -973,28 +1222,37 @@
                         <button class="bg-none-btn" id="bgNoneBtn">✕ Tanpa BG</button>
                     </div>
                 </div>
-
-                <!-- Upload Font Custom -->
                 <div class="modal-field full-width">
-                    <label>Font Custom <span style="font-weight:400;color:#777;font-size:0.75rem;">— upload font sendiri</span></label>
+                    <label>Font Custom <span style="font-weight:400;color:#777;font-size:0.65rem;">— upload .ttf .otf .woff .woff2</span></label>
                     <div class="font-upload-area">
                         <div class="upload-row">
                             <input type="file" id="fontUploadInput" accept=".ttf,.otf,.woff,.woff2" />
-                            <button id="fontUploadBtn" class="btn-ghost" style="background:var(--accent-gold)!important;color:var(--text-header)!important;border:none!important;">⬆ Upload</button>
+                            <button id="fontUploadBtn" class="btn-ghost" style="background:var(--accent-gold)!important;color:var(--text-header)!important;border:none!important;height:28px;padding:0 12px;font-size:0.7rem;">⬆ Upload</button>
                         </div>
                         <div class="upload-info">
-                            <strong>Persyaratan:</strong> format <strong>.ttf .otf .woff .woff2</strong> &bull; maks. <strong>5 MB</strong> &bull; browser modern dengan dukungan <strong>FontFace</strong>.
+                            <strong>Persyaratan:</strong> format <strong>.ttf .otf .woff .woff2</strong> &bull; maks. <strong>5 MB</strong>
                         </div>
                         <div class="uploaded-fonts" id="uploadedFontsList"></div>
                     </div>
                 </div>
             </div>
-
             <div class="modal-actions">
                 <button class="btn-secondary" id="modalCancelBtn">Batal</button>
                 <button class="btn-primary" id="modalAddBtn">➕ Tambah Teks</button>
             </div>
         </div>
+    </div>
+
+    <!-- ======== CONTEXT MENU ======== -->
+    <div class="context-menu" id="contextMenu">
+        <div class="cm-label">Urutan Layer</div>
+        <button id="cmBringForward">⬆ Bawa ke Depan</button>
+        <button id="cmSendBackward">⬇ Kirim ke Belakang</button>
+        <div class="cm-sep"></div>
+        <button id="cmCopy">📋 Salin</button>
+        <button id="cmPaste">📋 Tempel</button>
+        <div class="cm-sep"></div>
+        <button id="cmDelete">🗑️ Hapus</button>
     </div>
 
     <!-- ======== TOAST ======== -->
@@ -1022,9 +1280,10 @@
             let selectedObjectId = null;
             let currentPageIndex = 0;
             let isPdfLoaded = false;
-
-            // Custom fonts yang diupload { name, data: ArrayBuffer, family }
             let customFonts = [];
+            let clipboardObject = null;
+            let pageOrientation = 'portrait'; // 'portrait' | 'landscape'
+            let isAddingPage = false;
 
             // ============================================================
             // DOM REFS
@@ -1041,6 +1300,15 @@
             const downloadBtn = document.getElementById('downloadBtn');
             const pagesContainer = document.getElementById('pagesContainer');
             const dropZone = document.getElementById('dropZone');
+            const pagePrevBtn = document.getElementById('pagePrevBtn');
+            const pageNextBtn = document.getElementById('pageNextBtn');
+            const pageCounter = document.getElementById('pageCounter');
+            const addPageBtn = document.getElementById('addPageBtn');
+            const addPageOptions = document.getElementById('addPageOptions');
+            const deletePageBtn = document.getElementById('deletePageBtn');
+            const bringForwardBtn = document.getElementById('bringForwardBtn');
+            const sendBackwardBtn = document.getElementById('sendBackwardBtn');
+            const contextMenu = document.getElementById('contextMenu');
 
             // Modal
             const textModal = document.getElementById('textModal');
@@ -1058,6 +1326,13 @@
             const fontUploadInput = document.getElementById('fontUploadInput');
             const fontUploadBtn = document.getElementById('fontUploadBtn');
             const uploadedFontsList = document.getElementById('uploadedFontsList');
+
+            // Context menu items
+            const cmBringForward = document.getElementById('cmBringForward');
+            const cmSendBackward = document.getElementById('cmSendBackward');
+            const cmCopy = document.getElementById('cmCopy');
+            const cmPaste = document.getElementById('cmPaste');
+            const cmDelete = document.getElementById('cmDelete');
 
             const toastEl = document.getElementById('toast');
 
@@ -1121,12 +1396,15 @@
                 toastEl._timer = setTimeout(() => toastEl.classList.remove('show'), duration);
             }
 
-            function showError(msg) {
-                showToast('❌ ' + msg, 3500);
-            }
+            function showError(msg) { showToast('❌ ' + msg, 3500); }
 
-            function showSuccess(msg) {
-                showToast('✅ ' + msg, 2500);
+            function showSuccess(msg) { showToast('✅ ' + msg, 2500); }
+
+            function getPageDimensions(orientation) {
+                const w = 595.28,
+                    h = 841.89;
+                if (orientation === 'landscape') return { width: h, height: w };
+                return { width: w, height: h };
             }
 
             // ============================================================
@@ -1159,6 +1437,7 @@
                 updateUIState();
                 renderAllObjects();
                 updateCurrentPageHighlight();
+                updatePageCounter();
                 showSuccess('PDF berhasil dimuat (' + totalPages + ' halaman)');
             }
 
@@ -1168,7 +1447,7 @@
                 const pageWidth = viewport1.width;
                 const pageHeight = viewport1.height;
 
-                const scale = Math.min(800 / pageWidth, 1000 / pageHeight);
+                const scale = Math.min(780 / pageWidth, 1000 / pageHeight);
                 const scaledViewport = page.getViewport({ scale });
 
                 const container = document.createElement('div');
@@ -1176,6 +1455,7 @@
                 container.dataset.pageIndex = pageIndex;
                 container.style.width = scaledViewport.width + 'px';
                 container.style.height = scaledViewport.height + 'px';
+                container.style.flexShrink = '0';
 
                 const canvas = document.createElement('canvas');
                 canvas.width = scaledViewport.width;
@@ -1195,6 +1475,20 @@
                     if (e.target === container || e.target === canvas || e.target === overlay) {
                         currentPageIndex = pageIndex;
                         updateCurrentPageHighlight();
+                        updatePageCounter();
+                        closeContextMenu();
+                    }
+                });
+
+                // Right click for context menu
+                container.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    // Only show if there's a selected object on this page
+                    const hasObj = objects.some(o =>
+                        o.pageAssignments.includes(pageIndex) && o.id === selectedObjectId
+                    );
+                    if (selectedObjectId && hasObj) {
+                        openContextMenu(e.clientX, e.clientY);
                     }
                 });
 
@@ -1217,6 +1511,149 @@
                 });
             }
 
+            function updatePageCounter() {
+                const total = pagesData.length;
+                const current = total > 0 ? currentPageIndex + 1 : 0;
+                pageCounter.textContent = current + ' / ' + total;
+                pagePrevBtn.disabled = !isPdfLoaded || currentPageIndex <= 0;
+                pageNextBtn.disabled = !isPdfLoaded || currentPageIndex >= total - 1;
+                deletePageBtn.disabled = !isPdfLoaded || total <= 1;
+                addPageBtn.disabled = !isPdfLoaded;
+            }
+
+            // ============================================================
+            // PAGE MANAGEMENT
+            // ============================================================
+            async function addPage(where, orientation) {
+                if (!isPdfLoaded || !pdfBytes) {
+                    showError('PDF belum dimuat.');
+                    return;
+                }
+                orientation = orientation || pageOrientation;
+                const dims = getPageDimensions(orientation);
+
+                try {
+                    // Load pdf-lib document
+                    const pdfLibDoc = await PDFLib.PDFDocument.load(pdfBytes);
+                    const totalPages = pdfLibDoc.getPages().length;
+
+                    let insertIndex;
+                    if (where === 'before') {
+                        insertIndex = currentPageIndex;
+                    } else if (where === 'after') {
+                        insertIndex = currentPageIndex + 1;
+                    } else { // 'end'
+                        insertIndex = totalPages;
+                    }
+                    insertIndex = Math.max(0, Math.min(insertIndex, totalPages));
+
+                    // Insert blank page
+                    pdfLibDoc.insertPage(insertIndex, [dims.width, dims.height]);
+
+                    const newBytes = await pdfLibDoc.save();
+                    pdfBytes = newBytes;
+
+                    // Reload PDF
+                    const pdfJsBuffer = newBytes.slice(0);
+                    pdfDoc = await pdfjsLib.getDocument({ data: pdfJsBuffer }).promise;
+
+                    // Re-render all pages
+                    const oldPagesData = pagesData;
+                    pagesData = [];
+                    objects = [];
+                    selectedObjectId = null;
+                    pagesContainer.innerHTML = '';
+
+                    const totalPagesNew = pdfDoc.numPages;
+                    for (let i = 0; i < totalPagesNew; i++) {
+                        await renderPage(i);
+                    }
+
+                    // Update current page index
+                    if (where === 'before') {
+                        currentPageIndex = insertIndex;
+                    } else if (where === 'after') {
+                        currentPageIndex = insertIndex;
+                    } else {
+                        currentPageIndex = totalPagesNew - 1;
+                    }
+                    // Adjust if out of bounds
+                    currentPageIndex = Math.max(0, Math.min(currentPageIndex, pagesData.length - 1));
+
+                    isPdfLoaded = true;
+                    updateUIState();
+                    renderAllObjects();
+                    updateCurrentPageHighlight();
+                    updatePageCounter();
+                    showSuccess('Halaman ' + (where === 'before' ? 'sebelum' : where === 'after' ? 'setelah' : 'di akhir') +
+                        ' ditambahkan!');
+
+                } catch (err) {
+                    console.error(err);
+                    showError('Gagal menambah halaman: ' + err.message);
+                }
+            }
+
+            async function deleteCurrentPage() {
+                if (!isPdfLoaded || !pdfBytes || pagesData.length <= 1) {
+                    showError('Tidak bisa menghapus halaman terakhir.');
+                    return;
+                }
+
+                try {
+                    const pdfLibDoc = await PDFLib.PDFDocument.load(pdfBytes);
+                    const totalPages = pdfLibDoc.getPages().length;
+                    if (totalPages <= 1) {
+                        showError('Minimal 1 halaman.');
+                        return;
+                    }
+                    const idx = Math.min(currentPageIndex, totalPages - 1);
+                    pdfLibDoc.removePage(idx);
+
+                    const newBytes = await pdfLibDoc.save();
+                    pdfBytes = newBytes;
+
+                    const pdfJsBuffer = newBytes.slice(0);
+                    pdfDoc = await pdfjsLib.getDocument({ data: pdfJsBuffer }).promise;
+
+                    const oldPagesData = pagesData;
+                    pagesData = [];
+                    objects = [];
+                    selectedObjectId = null;
+                    pagesContainer.innerHTML = '';
+
+                    const totalPagesNew = pdfDoc.numPages;
+                    for (let i = 0; i < totalPagesNew; i++) {
+                        await renderPage(i);
+                    }
+
+                    currentPageIndex = Math.max(0, Math.min(idx, totalPagesNew - 1));
+
+                    isPdfLoaded = true;
+                    updateUIState();
+                    renderAllObjects();
+                    updateCurrentPageHighlight();
+                    updatePageCounter();
+                    showSuccess('Halaman dihapus!');
+
+                } catch (err) {
+                    console.error(err);
+                    showError('Gagal menghapus halaman: ' + err.message);
+                }
+            }
+
+            function goToPage(index) {
+                if (index < 0 || index >= pagesData.length) return;
+                currentPageIndex = index;
+                updateCurrentPageHighlight();
+                updatePageCounter();
+                // Scroll to page
+                const container = pagesData[index].container;
+                if (container) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
             // ============================================================
             // OBJECT MANAGEMENT
             // ============================================================
@@ -1234,12 +1671,12 @@
                     fillColor: data.fillColor || '#FFB800',
                     strokeColor: data.strokeColor || '#2B2B2B',
                     strokeWidth: data.strokeWidth ?? 2,
-                    // text specific
                     textContent: data.textContent || '',
                     fontFamily: data.fontFamily || 'Arial',
                     fontSize: data.fontSize || 28,
                     textColor: data.textColor || '#2B2B2B',
                     bgColor: data.bgColor || 'transparent',
+                    zIndex: data.zIndex ?? objects.length,
                 };
                 objects.push(obj);
                 renderAllObjects();
@@ -1252,6 +1689,7 @@
                 if (selectedObjectId === objId) selectedObjectId = null;
                 renderAllObjects();
                 updateUIState();
+                closeContextMenu();
             }
 
             function selectObject(objId) {
@@ -1285,6 +1723,76 @@
                 });
             }
 
+            function getObjectById(id) {
+                return objects.find(o => o.id === id);
+            }
+
+            // ============================================================
+            // LAYER ORDERING
+            // ============================================================
+            function bringForward() {
+                if (!selectedObjectId) return;
+                const obj = getObjectById(selectedObjectId);
+                if (!obj) return;
+                const idx = objects.indexOf(obj);
+                if (idx < objects.length - 1) {
+                    objects.splice(idx, 1);
+                    objects.splice(idx + 1, 0, obj);
+                    renderAllObjects();
+                    selectObject(obj.id);
+                    showSuccess('Objek dibawa ke depan');
+                }
+            }
+
+            function sendBackward() {
+                if (!selectedObjectId) return;
+                const obj = getObjectById(selectedObjectId);
+                if (!obj) return;
+                const idx = objects.indexOf(obj);
+                if (idx > 0) {
+                    objects.splice(idx, 1);
+                    objects.splice(idx - 1, 0, obj);
+                    renderAllObjects();
+                    selectObject(obj.id);
+                    showSuccess('Objek dikirim ke belakang');
+                }
+            }
+
+            // ============================================================
+            // COPY / PASTE
+            // ============================================================
+            function copyObject() {
+                if (!selectedObjectId) {
+                    showError('Pilih objek terlebih dahulu.');
+                    return;
+                }
+                const obj = getObjectById(selectedObjectId);
+                if (!obj) return;
+                // Deep clone
+                clipboardObject = JSON.parse(JSON.stringify(obj));
+                clipboardObject.id = generateId();
+                clipboardObject.x += 20;
+                clipboardObject.y += 20;
+                showSuccess('Objek disalin');
+            }
+
+            function pasteObject() {
+                if (!clipboardObject) {
+                    showError('Tidak ada objek di clipboard.');
+                    return;
+                }
+                const newObj = JSON.parse(JSON.stringify(clipboardObject));
+                newObj.id = generateId();
+                newObj.pageAssignments = getPageAssignments();
+                // Offset
+                newObj.x += 10;
+                newObj.y += 10;
+                objects.push(newObj);
+                renderAllObjects();
+                selectObject(newObj.id);
+                showSuccess('Objek ditempel');
+            }
+
             // ============================================================
             // RENDER OBJEK
             // ============================================================
@@ -1301,6 +1809,7 @@
                 el.style.cursor = 'move';
                 el.style.boxSizing = 'border-box';
                 el.style.overflow = 'hidden';
+                el.style.zIndex = obj.zIndex || 0;
 
                 if (obj.type === 'image') {
                     const img = document.createElement('img');
@@ -1311,11 +1820,10 @@
                     img.draggable = false;
                     el.appendChild(img);
                 } else if (obj.type === 'text') {
-                    // Text object
                     const textDiv = document.createElement('div');
                     textDiv.style.width = '100%';
                     textDiv.style.height = '100%';
-                    textDiv.style.padding = '4px 6px';
+                    textDiv.style.padding = '3px 5px';
                     textDiv.style.boxSizing = 'border-box';
                     textDiv.style.overflow = 'hidden';
                     textDiv.style.wordBreak = 'break-word';
@@ -1324,15 +1832,15 @@
                     textDiv.style.fontFamily = obj.fontFamily || 'Arial';
                     textDiv.style.fontSize = (obj.fontSize * scale) + 'px';
                     textDiv.style.color = obj.textColor || '#2B2B2B';
-                    textDiv.style.backgroundColor = obj.bgColor || 'transparent';
-                    if (obj.bgColor === 'transparent' || !obj.bgColor || obj.bgColor === 'none') {
+                    if (obj.bgColor && obj.bgColor !== 'transparent' && obj.bgColor !== 'none') {
+                        textDiv.style.backgroundColor = obj.bgColor;
+                    } else {
                         textDiv.style.backgroundColor = 'transparent';
                     }
                     textDiv.textContent = obj.textContent || 'Teks';
                     el.appendChild(textDiv);
                     el._textDiv = textDiv;
 
-                    // double click to edit
                     el.addEventListener('dblclick', (e) => {
                         e.stopPropagation();
                         openEditTextModal(obj.id);
@@ -1393,6 +1901,13 @@
                 el.addEventListener('click', (e) => {
                     e.stopPropagation();
                     selectObject(obj.id);
+                    closeContextMenu();
+                });
+                el.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    selectObject(obj.id);
+                    openContextMenu(e.clientX, e.clientY);
                 });
 
                 return el;
@@ -1403,7 +1918,10 @@
                     page.overlay.innerHTML = '';
                 });
 
-                objects.forEach(obj => {
+                // Sort by zIndex
+                const sorted = [...objects].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+
+                sorted.forEach(obj => {
                     obj.pageAssignments.forEach(pageIndex => {
                         const page = pagesData.find(p => p.pageIndex === pageIndex);
                         if (!page) return;
@@ -1425,6 +1943,7 @@
                         el.style.top = (obj.y * page.scale) + 'px';
                         el.style.width = (obj.width * page.scale) + 'px';
                         el.style.height = (obj.height * page.scale) + 'px';
+                        el.style.zIndex = obj.zIndex || 0;
 
                         if (obj.type === 'text' && el._textDiv) {
                             el._textDiv.style.fontSize = (obj.fontSize * page.scale) + 'px';
@@ -1443,18 +1962,21 @@
                             el._shapeElement.setAttribute('stroke', obj.strokeColor || 'none');
                             el._shapeElement.setAttribute('stroke-width', obj.strokeWidth * page.scale);
                         }
+                        if (obj.type === 'image' && el.querySelector('img')) {
+                            el.querySelector('img').src = obj.src;
+                        }
                     });
                 });
             }
 
             // ============================================================
-            // MOUSE INTERACTIONS (drag & resize)
+            // MOUSE INTERACTIONS
             // ============================================================
             function onObjectMouseDown(e, objId) {
                 e.preventDefault();
                 e.stopPropagation();
                 selectObject(objId);
-                const obj = objects.find(o => o.id === objId);
+                const obj = getObjectById(objId);
                 if (!obj) return;
 
                 const overlay = e.target.closest('.overlay');
@@ -1488,7 +2010,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 selectedObjectId = objId;
-                const obj = objects.find(o => o.id === objId);
+                const obj = getObjectById(objId);
                 if (!obj) return;
 
                 const overlay = e.target.closest('.overlay');
@@ -1544,6 +2066,47 @@
             }
 
             // ============================================================
+            // CONTEXT MENU
+            // ============================================================
+            function openContextMenu(x, y) {
+                contextMenu.style.left = x + 'px';
+                contextMenu.style.top = y + 'px';
+                contextMenu.classList.add('open');
+                // Prevent overflow
+                const rect = contextMenu.getBoundingClientRect();
+                if (rect.right > window.innerWidth) {
+                    contextMenu.style.left = (x - rect.width) + 'px';
+                }
+                if (rect.bottom > window.innerHeight) {
+                    contextMenu.style.top = (y - rect.height) + 'px';
+                }
+            }
+
+            function closeContextMenu() {
+                contextMenu.classList.remove('open');
+            }
+
+            document.addEventListener('click', (e) => {
+                if (!contextMenu.contains(e.target)) {
+                    closeContextMenu();
+                }
+            });
+
+            // Context menu actions
+            cmBringForward.addEventListener('click', () => { bringForward();
+                closeContextMenu(); });
+            cmSendBackward.addEventListener('click', () => { sendBackward();
+                closeContextMenu(); });
+            cmCopy.addEventListener('click', () => { copyObject();
+                closeContextMenu(); });
+            cmPaste.addEventListener('click', () => { pasteObject();
+                closeContextMenu(); });
+            cmDelete.addEventListener('click', () => {
+                if (selectedObjectId) deleteObject(selectedObjectId);
+                closeContextMenu();
+            });
+
+            // ============================================================
             // TEXT MODAL
             // ============================================================
             let editingTextId = null;
@@ -1563,7 +2126,7 @@
             }
 
             function openEditTextModal(objId) {
-                const obj = objects.find(o => o.id === objId);
+                const obj = getObjectById(objId);
                 if (!obj || obj.type !== 'text') return;
                 editingTextId = objId;
                 textContent.value = obj.textContent || '';
@@ -1607,7 +2170,6 @@
                 let w = 320,
                     h = 80;
                 if (page) {
-                    // estimasi lebar berdasarkan teks
                     const temp = document.createElement('span');
                     temp.style.fontSize = fontSize + 'px';
                     temp.style.fontFamily = fontFamily;
@@ -1616,8 +2178,8 @@
                     temp.textContent = content;
                     document.body.appendChild(temp);
                     const rect = temp.getBoundingClientRect();
-                    w = Math.max(60, rect.width + 20);
-                    h = Math.max(30, rect.height + 16);
+                    w = Math.max(60, rect.width + 24);
+                    h = Math.max(30, rect.height + 20);
                     document.body.removeChild(temp);
                 }
 
@@ -1625,15 +2187,13 @@
                 const y = (page ? (page.pageHeight - h) / 2 : 100);
 
                 if (editingTextId) {
-                    // Edit existing
-                    const obj = objects.find(o => o.id === editingTextId);
+                    const obj = getObjectById(editingTextId);
                     if (obj && obj.type === 'text') {
                         obj.textContent = content;
                         obj.fontFamily = fontFamily;
                         obj.fontSize = fontSize;
                         obj.textColor = textColor;
                         obj.bgColor = bgColor;
-                        // update ukuran
                         obj.width = w;
                         obj.height = h;
                         updateObjectElements(obj);
@@ -1641,18 +2201,17 @@
                         showSuccess('Teks diperbarui');
                     }
                 } else {
-                    // Create new
                     createObject('text', {
-                        x: x,
-                        y: y,
+                        x,
+                        y,
                         width: w,
                         height: h,
                         pageAssignments: getPageAssignments(),
                         textContent: content,
-                        fontFamily: fontFamily,
-                        fontSize: fontSize,
-                        textColor: textColor,
-                        bgColor: bgColor,
+                        fontFamily,
+                        fontSize,
+                        textColor,
+                        bgColor,
                     });
                     showSuccess('Teks ditambahkan');
                 }
@@ -1679,7 +2238,6 @@
                     const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9]/g, '_');
                     const family = 'custom_' + fontName + '_' + Date.now().toString(36);
 
-                    // Load dengan FontFace API
                     const fontData = new Uint8Array(buffer);
                     const blob = new Blob([fontData], { type: 'font/' + ext });
                     const url = URL.createObjectURL(blob);
@@ -1689,7 +2247,6 @@
                     document.fonts.add(fontFace);
                     URL.revokeObjectURL(url);
 
-                    // Simpan
                     customFonts.push({
                         name: file.name,
                         family: family,
@@ -1697,26 +2254,22 @@
                         ext: ext
                     });
 
-                    // Tambahkan ke dropdown
                     const opt = document.createElement('option');
                     opt.value = family;
                     opt.textContent = '📁 ' + file.name;
                     document.getElementById('customFontOptgroup').appendChild(opt);
 
-                    // Tampilkan di list
                     const tag = document.createElement('span');
                     tag.className = 'font-tag';
                     tag.innerHTML = '📁 ' + file.name +
                         ' <span class="remove-font" data-family="' + family + '" title="Hapus font">×</span>';
                     uploadedFontsList.appendChild(tag);
 
-                    // Event hapus
                     tag.querySelector('.remove-font').addEventListener('click', function(e) {
                         const f = this.dataset.family;
                         removeCustomFont(f);
                     });
 
-                    // Pilih font yang baru
                     fontFamilySelect.value = family;
                     showSuccess('Font "' + file.name + '" berhasil diupload!');
 
@@ -1731,11 +2284,9 @@
                 if (idx === -1) return;
                 customFonts.splice(idx, 1);
 
-                // Hapus dari dropdown
                 const opt = document.querySelector('#customFontOptgroup option[value="' + family + '"]');
                 if (opt) opt.remove();
 
-                // Hapus dari list
                 const tag = uploadedFontsList.querySelector('.font-tag .remove-font[data-family="' + family + '"]');
                 if (tag) tag.closest('.font-tag').remove();
 
@@ -1743,7 +2294,7 @@
             }
 
             // ============================================================
-            // PDF DOWNLOAD (dengan teks)
+            // PDF DOWNLOAD
             // ============================================================
             async function downloadPDF() {
                 if (!isPdfLoaded || !pdfBytes) {
@@ -1754,7 +2305,6 @@
                     const pdfLibDoc = await PDFLib.PDFDocument.load(pdfBytes);
                     const pages = pdfLibDoc.getPages();
 
-                    // Kumpulkan font custom yang dibutuhkan
                     const usedCustomFonts = [];
                     for (const obj of objects) {
                         if (obj.type === 'text') {
@@ -1767,7 +2317,6 @@
                         }
                     }
 
-                    // Embed custom fonts
                     const embeddedFonts = {};
                     for (const cf of usedCustomFonts) {
                         try {
@@ -1809,13 +2358,11 @@
                                 const fontFamily = obj.fontFamily || 'Arial';
                                 let pdfFont = null;
 
-                                // Coba custom font
                                 const cf = customFonts.find(c => c.family === fontFamily);
                                 if (cf && embeddedFonts[cf.family]) {
                                     pdfFont = embeddedFonts[cf.family];
                                 }
 
-                                // Fallback ke standard font
                                 if (!pdfFont) {
                                     try {
                                         pdfFont = await pdfLibDoc.embedFont(PDFLib.StandardFonts.Helvetica);
@@ -1828,12 +2375,10 @@
                                 const y = ph - obj.y - obj.height;
                                 const size = obj.fontSize || 28;
 
-                                // Warna
                                 const colorRGB = hexToRgb(obj.textColor || '#2B2B2B');
                                 const color = colorRGB ? PDFLib.rgb(colorRGB.r, colorRGB.g, colorRGB.b) :
                                     PDFLib.rgb(0.17, 0.17, 0.17);
 
-                                // Background
                                 const bg = obj.bgColor;
                                 if (bg && bg !== 'transparent' && bg !== 'none') {
                                     const bgRGB = hexToRgb(bg);
@@ -1859,7 +2404,6 @@
                                 });
 
                             } else {
-                                // Shape
                                 let fillRGB = null,
                                     strokeRGB = null;
                                 if (obj.fillColor && obj.fillColor !== 'none') {
@@ -1951,6 +2495,10 @@
                 downloadBtn.disabled = !hasPdf;
                 deleteBtn.disabled = !selectedObjectId;
                 customPagesInput.disabled = !hasPdf;
+                bringForwardBtn.disabled = !selectedObjectId;
+                sendBackwardBtn.disabled = !selectedObjectId;
+                addPageBtn.disabled = !hasPdf;
+                updatePageCounter();
             }
 
             // ============================================================
@@ -2015,11 +2563,10 @@
             // Text
             addTextBtn.addEventListener('click', openAddTextModal);
 
-            // Modal events
+            // Modal
             modalCloseBtn.addEventListener('click', closeTextModal);
             modalCancelBtn.addEventListener('click', closeTextModal);
             modalAddBtn.addEventListener('click', applyTextFromModal);
-
             textModal.addEventListener('click', (e) => {
                 if (e.target === textModal) closeTextModal();
             });
@@ -2029,6 +2576,15 @@
                 if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObjectId &&
                     !e.target.matches('input, textarea, select')) {
                     deleteObject(selectedObjectId);
+                }
+                // Ctrl+C / Ctrl+V
+                if (e.ctrlKey && e.key === 'c' && selectedObjectId) {
+                    e.preventDefault();
+                    copyObject();
+                }
+                if (e.ctrlKey && e.key === 'v') {
+                    e.preventDefault();
+                    pasteObject();
                 }
             });
 
@@ -2049,9 +2605,7 @@
             });
 
             // Font upload
-            fontUploadBtn.addEventListener('click', () => {
-                fontUploadInput.click();
-            });
+            fontUploadBtn.addEventListener('click', () => fontUploadInput.click());
             fontUploadInput.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -2072,6 +2626,49 @@
 
             // Download
             downloadBtn.addEventListener('click', downloadPDF);
+
+            // Page navigation
+            pagePrevBtn.addEventListener('click', () => goToPage(currentPageIndex - 1));
+            pageNextBtn.addEventListener('click', () => goToPage(currentPageIndex + 1));
+
+            // Add page dropdown
+            addPageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addPageOptions.classList.toggle('open');
+            });
+            document.addEventListener('click', () => {
+                addPageOptions.classList.remove('open');
+            });
+
+            // Add page options
+            document.querySelectorAll('#addPageOptions button[data-where]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const where = btn.dataset.where;
+                    const orient = document.querySelector('#addPageOptions .orientation-row .active');
+                    const orientation = orient ? orient.dataset.orient : 'portrait';
+                    addPageOptions.classList.remove('open');
+                    addPage(where, orientation);
+                });
+            });
+
+            // Orientation selector
+            document.querySelectorAll('#addPageOptions .orientation-row button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('#addPageOptions .orientation-row button').forEach(b => b.classList
+                        .remove('active'));
+                    btn.classList.add('active');
+                    pageOrientation = btn.dataset.orient;
+                });
+            });
+
+            // Delete page
+            deletePageBtn.addEventListener('click', deleteCurrentPage);
+
+            // Layer ordering
+            bringForwardBtn.addEventListener('click', bringForward);
+            sendBackwardBtn.addEventListener('click', sendBackward);
 
             // ============================================================
             // DRAG & DROP
@@ -2108,9 +2705,6 @@
             // ============================================================
             updateUIState();
             showToast('📄 Seret PDF atau klik "Choose File"', 2500);
-
-            // Perbaiki custom font optgroup jika sudah ada custom font dari sebelumnya
-            // (tidak ada di initial state)
 
             console.log('📄 PDF Editor Pro siap!');
         })();

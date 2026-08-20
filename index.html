@@ -224,19 +224,19 @@
             display: inline-block;
         }
         .dropdown-menu {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
+            position: fixed;
             background: #ffffff;
             min-width: 250px;
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
             border: 1.5px solid var(--border-grey);
             padding: 6px;
             display: none;
             flex-direction: column;
             gap: 2px;
-            z-index: 1100;
+            z-index: 2600;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         .dropdown-menu.right {
             left: auto;
@@ -252,13 +252,35 @@
         }
         .dropdown-header {
             padding: 6px 10px;
-            font-size: 0.68rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: var(--primary-grey);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid var(--border-grey);
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .btn-close-dropdown {
+            background: transparent;
+            border: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #888888;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+        .btn-close-dropdown:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--danger);
         }
         .dropdown-item {
             display: flex;
@@ -305,8 +327,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 24px 16px 80px;
+            padding: 24px 16px 200px;
             position: relative;
+            box-sizing: border-box;
         }
 
         #pagesContainer {
@@ -608,7 +631,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            z-index: 1050;
+            z-index: 2200;
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
             opacity: 0;
             pointer-events: none;
@@ -1088,17 +1111,323 @@
         .toast.warning { border-left-color: var(--accent-gold); }
 
         /* ============================================================
-           RESPONSIVENESS
+           ZOOM CONTROLS & SLIDER STYLING
            ============================================================ */
-        @media (max-width: 960px) {
+        .zoom-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 4px;
+        }
+        .zoom-range-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 84px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .zoom-range-slider:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .zoom-range-slider:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .zoom-range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+            border: 1.5px solid #ffffff;
+        }
+        .zoom-range-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            cursor: pointer;
+            border: 1.5px solid #ffffff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+        .zoom-input {
+            width: 48px;
+            height: 26px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-grey);
+            border-radius: var(--radius-sm);
+            color: #ffffff;
+            text-align: center;
+            font-size: 0.76rem;
+            font-weight: 700;
+            outline: none;
+        }
+        .zoom-input:focus {
+            border-color: var(--accent-gold);
+            background: rgba(0, 0, 0, 0.45);
+        }
+
+        /* ============================================================
+           MOBILE BOTTOM ACTION BAR & SHEET BACKDROP
+           ============================================================ */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--primary-grey);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 4px;
+            user-select: none;
+        }
+        .mobile-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 4px 6px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            gap: 2px;
+            flex: 1;
+            max-width: 65px;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+        .mobile-nav-btn .icon {
+            font-size: 1.15rem;
+            line-height: 1;
+        }
+        .mobile-nav-btn:active:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--accent-gold);
+            transform: scale(0.96);
+        }
+        .mobile-nav-btn:disabled {
+            opacity: 0.38;
+            filter: grayscale(0.7);
+            cursor: not-allowed;
+        }
+
+        /* ============================================================
+           COMPREHENSIVE RESPONSIVENESS (ALL DEVICES)
+           ============================================================ */
+        @media (max-width: 1200px) {
+            .zoom-range-slider {
+                width: 65px;
+            }
+        }
+
+        @media (max-width: 992px) {
             .btn-tb .label { display: none; }
             .brand span { display: none; }
+            .brand-badge { display: inline-block; font-size: 0.6rem; }
+            .zoom-range-slider { width: 55px; }
             .tb-section { gap: 4px; }
         }
-        @media (max-width: 600px) {
-            #toolbar { padding: 0 8px; }
-            .btn-tb { padding: 5px 7px; }
-            .tb-group { padding: 2px; }
+
+        @media (max-width: 768px) {
+            :root {
+                --toolbar-height: 52px;
+            }
+            #toolbar {
+                padding: 0 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                justify-content: space-between;
+                gap: 6px;
+            }
+            #toolbar::-webkit-scrollbar {
+                display: none;
+            }
+            .tb-section {
+                flex-shrink: 0;
+                gap: 4px;
+            }
+            .zoom-range-slider {
+                display: none;
+            }
+            .zoom-input {
+                width: 42px;
+                font-size: 0.72rem;
+            }
+            .page-nav-input {
+                width: 30px;
+                font-size: 0.72rem;
+            }
+
+            /* Mobile Bottom Nav is Active */
+            .mobile-bottom-nav {
+                display: flex;
+            }
+
+            /* Workspace & Cards with generous bottom scroll buffer */
+            #workspace {
+                padding: 12px 8px 340px !important;
+            }
+            .page-header-bar {
+                padding: 0 2px;
+            }
+            .page-title-tag {
+                font-size: 0.68rem;
+                padding: 2px 6px;
+            }
+            .btn-page-tool {
+                padding: 2px 6px;
+                font-size: 0.68rem;
+            }
+
+            /* Mobile Floating Panel for Dropdowns */
+            .dropdown-menu {
+                position: fixed !important;
+                top: auto !important;
+                bottom: 66px !important;
+                left: 8px !important;
+                right: 8px !important;
+                width: auto !important;
+                max-width: calc(100vw - 16px) !important;
+                border-radius: 16px !important;
+                border: 1.5px solid var(--border-grey) !important;
+                border-top: 3px solid var(--accent-gold) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+                z-index: 2600 !important;
+                padding: 12px 14px 16px !important;
+                max-height: 72vh !important;
+                overflow-y: auto !important;
+                animation: slideUpPanel 0.2s ease !important;
+            }
+            @keyframes slideUpPanel {
+                from { opacity: 0; transform: translateY(12px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .dropdown-header {
+                font-size: 0.82rem;
+                padding: 8px 4px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                color: var(--primary-grey);
+            }
+            .dropdown-item {
+                padding: 12px 14px;
+                font-size: 0.88rem;
+                border-radius: var(--radius-sm);
+            }
+
+            /* Modals as Full Bottom Sheet on Mobile */
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+            .modal-box {
+                max-width: 100vw;
+                width: 100vw;
+                max-height: 88vh;
+                border-radius: 20px 20px 0 0;
+                margin: 0;
+            }
+            .modal-header {
+                padding: 12px 16px;
+            }
+            .modal-header h3 {
+                font-size: 0.95rem;
+            }
+            .modal-body {
+                padding: 14px 16px;
+            }
+            .modal-footer {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+            }
+            .form-grid-2,
+            .form-grid-3 {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .chip-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: 6px;
+            }
+            .pm-grid {
+                grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+                gap: 10px;
+            }
+            .pm-thumb-wrapper {
+                height: 130px;
+            }
+
+            /* Floating Bar Docked & Touch Scrollable on Mobile */
+            #floatingPropertyBar {
+                max-width: calc(100vw - 16px) !important;
+                width: calc(100vw - 16px) !important;
+                bottom: 68px !important;
+                left: 8px !important;
+                right: 8px !important;
+                transform: translateY(120px) !important;
+                border-radius: 16px !important;
+                padding: 6px 12px !important;
+                gap: 6px !important;
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                justify-content: flex-start !important;
+                align-items: center !important;
+                background: rgba(45, 45, 45, 0.96) !important;
+                backdrop-filter: blur(8px) !important;
+                border: 1.5px solid var(--accent-gold) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+                z-index: 2200 !important;
+            }
+            #floatingPropertyBar.show {
+                transform: translateY(0) !important;
+            }
+            #floatingPropertyBar::-webkit-scrollbar {
+                display: none !important;
+            }
+            .prop-group {
+                display: flex !important;
+                align-items: center !important;
+                flex-shrink: 0 !important;
+                gap: 4px !important;
+            }
+            .prop-item {
+                flex-shrink: 0 !important;
+                font-size: 0.72rem !important;
+            }
+            .prop-item label {
+                display: none !important;
+            }
+            .prop-select, .prop-input {
+                height: 28px !important;
+                font-size: 0.75rem !important;
+            }
+            .prop-btn {
+                min-width: 28px !important;
+                height: 28px !important;
+                padding: 2px 6px !important;
+                font-size: 0.75rem !important;
+            }
         }
     </style>
 </head>
@@ -1120,7 +1449,10 @@
                     <span style="font-size:0.6rem;">▼</span>
                 </button>
                 <div class="dropdown-menu" id="fileMenuDropdown">
-                    <div class="dropdown-header">Dokumen PDF</div>
+                    <div class="dropdown-header">
+                        <span>Dokumen PDF</span>
+                        <button type="button" class="btn-close-dropdown" data-close-dropdown title="Tutup Panel">✕</button>
+                    </div>
                     <button class="dropdown-item" id="openPdfItem">
                         <span class="icon">📂</span> Buka PDF Baru
                     </button>
@@ -1154,7 +1486,10 @@
                         <span style="font-size:0.6rem;">▼</span>
                     </button>
                     <div class="dropdown-menu" id="addPageMenuDropdown" style="min-width:260px;">
-                        <div class="dropdown-header">Posisi Sisip Halaman</div>
+                        <div class="dropdown-header">
+                            <span>Tambah Halaman Baru</span>
+                            <button type="button" class="btn-close-dropdown" data-close-dropdown title="Tutup Panel">✕</button>
+                        </div>
                         <button class="dropdown-item" data-add-where="after">
                             <span class="icon">⬇️</span> Sisip Setelah Halaman Ini
                         </button>
@@ -1166,7 +1501,7 @@
                         </button>
                         
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-header">Ukuran Kertas Baru</div>
+                        <div class="dropdown-header" style="font-size:0.68rem;border:none;margin-bottom:0;">Ukuran Kertas Baru</div>
                         <div style="padding:4px 10px;" id="paperSizeDropdownContainer">
                             <select id="selectPaperSize" class="form-control" style="font-size:0.75rem;padding:4px 8px;height:30px;">
                                 <option value="A4" selected>A4 (210 x 297 mm)</option>
@@ -1180,7 +1515,7 @@
                         </div>
 
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-header">Orientasi Halaman</div>
+                        <div class="dropdown-header" style="font-size:0.68rem;border:none;margin-bottom:0;">Orientasi Halaman</div>
                         <button class="dropdown-item" id="toggleOrientationBtn" type="button">
                             <span class="icon">📱</span> Orientasi: <b id="orientationLabel" style="margin-left:4px;">Portrait</b>
                         </button>
@@ -1199,13 +1534,46 @@
             </div>
         </div>
 
-        <!-- Section Center: Page Navigator -->
+        <!-- Section Center: Page Navigator & Zoom View -->
         <div class="tb-section">
+            <!-- Page Nav -->
             <div class="tb-group page-nav-box">
                 <button class="btn-tb" id="prevPageNavBtn" disabled title="Halaman Sebelumnya">◀</button>
                 <input type="text" class="page-nav-input" id="pageNavInput" value="0" disabled title="Ketik nomor halaman & tekan Enter" />
                 <span class="page-total-label" id="pageTotalLabel">/ 0</span>
                 <button class="btn-tb" id="nextPageNavBtn" disabled title="Halaman Berikutnya">▶</button>
+            </div>
+
+            <!-- Zoom Controls Group -->
+            <div class="tb-group zoom-group">
+                <button class="btn-tb" id="zoomOutBtn" disabled title="Perkecil Tampilan (Zoom Out)">🔍−</button>
+                <input type="range" id="zoomSlider" min="30" max="300" step="5" value="100" class="zoom-range-slider" title="Geser Kiri/Kanan untuk Mengatur Zoom" disabled />
+                <input type="text" id="zoomInput" class="zoom-input" value="100%" disabled title="Ketik persentase zoom (30% - 300%) & Enter" />
+                <button class="btn-tb" id="zoomInBtn" disabled title="Perbesar Tampilan (Zoom In)">🔍+</button>
+                
+                <!-- Zoom Presets Dropdown -->
+                <div class="dropdown">
+                    <button class="btn-tb" id="zoomPresetDropdownBtn" disabled title="Pilihan Cepat Persentase Zoom">
+                        <span style="font-size:0.6rem;">▼</span>
+                    </button>
+                    <div class="dropdown-menu" id="zoomPresetMenu" style="min-width:140px;">
+                        <div class="dropdown-header">
+                            <span>Pilihan Zoom</span>
+                            <button type="button" class="btn-close-dropdown" data-close-dropdown title="Tutup Panel">✕</button>
+                        </div>
+                        <button class="dropdown-item" data-zoom-preset="fit-width">Fit Lebar Layar</button>
+                        <button class="dropdown-item" data-zoom-preset="fit-page">Fit Halaman</button>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item" data-zoom-preset="50">50%</button>
+                        <button class="dropdown-item" data-zoom-preset="75">75%</button>
+                        <button class="dropdown-item" data-zoom-preset="100">100% (Normal)</button>
+                        <button class="dropdown-item" data-zoom-preset="125">125%</button>
+                        <button class="dropdown-item" data-zoom-preset="150">150%</button>
+                        <button class="dropdown-item" data-zoom-preset="200">200%</button>
+                        <button class="dropdown-item" data-zoom-preset="250">250%</button>
+                        <button class="dropdown-item" data-zoom-preset="300">300%</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1225,7 +1593,10 @@
                         <span style="font-size:0.6rem;">▼</span>
                     </button>
                     <div class="dropdown-menu right" id="imageMenuDropdown" style="min-width:230px;">
-                        <div class="dropdown-header">Target Halaman Gambar</div>
+                        <div class="dropdown-header">
+                            <span>Target Halaman Gambar</span>
+                            <button type="button" class="btn-close-dropdown" data-close-dropdown title="Tutup Panel">✕</button>
+                        </div>
                         <div style="padding:4px 10px;">
                             <select id="imageInsertScopeSelect" class="form-control" style="font-size:0.75rem;padding:3px 6px;height:28px;">
                                 <option value="current" selected>Halaman Saat Ini Saja</option>
@@ -1249,7 +1620,10 @@
                         <span style="font-size:0.6rem;">▼</span>
                     </button>
                     <div class="dropdown-menu right" id="shapeMenuDropdown" style="min-width:240px;">
-                        <div class="dropdown-header">Target Halaman Bentuk</div>
+                        <div class="dropdown-header">
+                            <span>Target Halaman Bentuk</span>
+                            <button type="button" class="btn-close-dropdown" data-close-dropdown title="Tutup Panel">✕</button>
+                        </div>
                         <div style="padding:4px 10px;">
                             <select id="shapeInsertScopeSelect" class="form-control" style="font-size:0.75rem;padding:3px 6px;height:28px;">
                                 <option value="current" selected>Halaman Saat Ini Saja</option>
@@ -1259,7 +1633,7 @@
                             <input type="text" id="shapeInsertScopeCustomInput" class="form-control" style="display:none;margin-top:6px;font-size:0.72rem;padding:4px 8px;height:28px;" placeholder="Contoh: 1, 3-5" />
                         </div>
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-header">Pilih Bentuk</div>
+                        <div class="dropdown-header" style="font-size:0.68rem;border:none;margin-bottom:0;">Pilih Bentuk</div>
                         <button class="dropdown-item" data-shape="rect"><span class="icon">⬜</span> Persegi Panjang</button>
                         <button class="dropdown-item" data-shape="square"><span class="icon">⬛</span> Kotak Presisi</button>
                         <button class="dropdown-item" data-shape="ellipse"><span class="icon">⭕</span> Lingkaran / Elips</button>
@@ -1825,6 +2199,34 @@
         </div>
     </div>
 
+    <!-- ======== MOBILE BOTTOM ACTION BAR (Touch-Friendly Native Dock) ======== -->
+    <nav id="mobileBottomNav" class="mobile-bottom-nav">
+        <button class="mobile-nav-btn" id="mobAddPageBtn" title="Tambah Halaman Baru">
+            <span class="icon">➕</span>
+            <span class="text">Halaman</span>
+        </button>
+        <button class="mobile-nav-btn" id="mobPageManagerBtn" disabled title="Kelola Urutan Halaman">
+            <span class="icon">📑</span>
+            <span class="text">Kelola</span>
+        </button>
+        <button class="mobile-nav-btn" id="mobAddTextBtn" disabled title="Tambah Teks">
+            <span class="icon">✏️</span>
+            <span class="text">Teks</span>
+        </button>
+        <button class="mobile-nav-btn" id="mobAddImageBtn" disabled title="Tambah Gambar">
+            <span class="icon">🖼️</span>
+            <span class="text">Gambar</span>
+        </button>
+        <button class="mobile-nav-btn" id="mobAddShapeBtn" disabled title="Tambah Bentuk">
+            <span class="icon">🔷</span>
+            <span class="text">Bentuk</span>
+        </button>
+        <button class="mobile-nav-btn" id="mobNumberingBtn" disabled title="Nomor Halaman">
+            <span class="icon">🔢</span>
+            <span class="text">Nomor</span>
+        </button>
+    </nav>
+
     <!-- ======== TOAST CONTAINER ======== -->
     <div class="toast" id="toast">
         <span id="toastIcon">✅</span>
@@ -1880,6 +2282,7 @@
             let objects = [];
             let selectedObjectIds = new Set(); // Multi-Selection Set
             let currentPageIndex = 0;
+            let currentZoom = 100; // Zoom percentage: 30% to 300%
             let isPdfLoaded = false;
             let defaultOrientation = 'portrait';
             let selectedPaperSizeKey = 'A4';
@@ -1932,6 +2335,15 @@
             const nextPageNavBtn = $('nextPageNavBtn');
             const pageNavInput = $('pageNavInput');
             const pageTotalLabel = $('pageTotalLabel');
+
+            // Zoom View DOM References
+            const zoomOutBtn = $('zoomOutBtn');
+            const zoomSlider = $('zoomSlider');
+            const zoomInput = $('zoomInput');
+            const zoomInBtn = $('zoomInBtn');
+            const zoomPresetDropdownBtn = $('zoomPresetDropdownBtn');
+            const zoomPresetMenu = $('zoomPresetMenu');
+
             const addTextToolBtn = $('addTextToolBtn');
             const addImageDropdownBtn = $('addImageDropdownBtn');
             const imageMenuDropdown = $('imageMenuDropdown');
@@ -1946,6 +2358,15 @@
             const quickDownloadBtn = $('quickDownloadBtn');
             const toggleOrientationBtn = $('toggleOrientationBtn');
             const orientationLabel = $('orientationLabel');
+
+            // Sheet Backdrop & Mobile Dock
+            const sheetBackdrop = $('sheetBackdrop');
+            const mobAddPageBtn = $('mobAddPageBtn');
+            const mobPageManagerBtn = $('mobPageManagerBtn');
+            const mobAddTextBtn = $('mobAddTextBtn');
+            const mobAddImageBtn = $('mobAddImageBtn');
+            const mobAddShapeBtn = $('mobAddShapeBtn');
+            const mobNumberingBtn = $('mobNumberingBtn');
 
             // Inputs
             const pdfFileInput = $('pdfFileInput');
@@ -2101,8 +2522,67 @@
                 return orientation === 'landscape' ? { width: base.height, height: base.width } : { width: base.width, height: base.height };
             }
 
+            let activeDropdownMenu = null;
+
+            function toggleDropdown(btn, menu) {
+                if (activeDropdownMenu === menu) {
+                    closeAllDropdowns();
+                    return;
+                }
+
+                closeAllDropdowns();
+
+                const isMobile = window.innerWidth <= 768;
+
+                if (isMobile) {
+                    menu.style.position = 'fixed';
+                    menu.style.bottom = '66px';
+                    menu.style.top = 'auto';
+                    menu.style.left = '8px';
+                    menu.style.right = '8px';
+                    menu.style.width = 'auto';
+                    menu.style.maxWidth = 'calc(100vw - 16px)';
+                    menu.style.zIndex = '2600';
+                } else {
+                    const rect = btn.getBoundingClientRect();
+                    menu.style.position = 'fixed';
+                    menu.style.zIndex = '2600';
+                    menu.style.bottom = 'auto';
+
+                    let top = rect.bottom + 6;
+                    if (top + 280 > window.innerHeight && rect.top > 280) {
+                        top = Math.max(10, rect.top - 280);
+                    }
+                    menu.style.top = top + 'px';
+
+                    const menuWidth = Math.min(window.innerWidth - 16, 270);
+                    menu.style.width = menuWidth + 'px';
+
+                    let left = rect.left;
+                    if (left + menuWidth > window.innerWidth - 8) {
+                        left = window.innerWidth - menuWidth - 8;
+                    }
+                    if (left < 8) left = 8;
+                    menu.style.left = left + 'px';
+                    menu.style.right = 'auto';
+                }
+
+                menu.classList.add('show');
+                activeDropdownMenu = menu;
+            }
+
             function closeAllDropdowns() {
-                document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+                document.querySelectorAll('.dropdown-menu.show').forEach(m => {
+                    m.classList.remove('show');
+                    m.style.position = '';
+                    m.style.top = '';
+                    m.style.left = '';
+                    m.style.right = '';
+                    m.style.bottom = '';
+                    m.style.width = '';
+                    m.style.maxWidth = '';
+                });
+                activeDropdownMenu = null;
             }
 
             function openModal(modalEl) {
@@ -2285,7 +2765,8 @@
                 const pageHeight = viewportRaw.height;
 
                 const maxDisplayWidth = Math.min(window.innerWidth - 48, 800);
-                const scale = Math.min(maxDisplayWidth / pageWidth, 1000 / pageHeight, 1.25);
+                const baseScale = Math.min(maxDisplayWidth / pageWidth, 1000 / pageHeight, 1.25);
+                const scale = baseScale * (currentZoom / 100);
                 const viewport = page.getViewport({ scale });
 
                 const wrapper = document.createElement('div');
@@ -2343,6 +2824,7 @@
                 let marqueeEl = null;
 
                 container.addEventListener('mousedown', (e) => {
+                    closeAllDropdowns();
                     if (e.target !== container && e.target !== canvas && e.target !== overlay) return;
                     if (e.button !== 0) return;
 
@@ -2420,8 +2902,11 @@
                 });
             }
 
-            async function renderAllPages() {
+            async function renderAllPages(targetIndex = null) {
                 if (!pdfDoc) return;
+                const targetPage = (targetIndex !== null && targetIndex >= 0) ? targetIndex : currentPageIndex;
+                const savedSelectedIds = new Set(selectedObjectIds);
+
                 pagesContainer.innerHTML = '';
                 pagesData = [];
 
@@ -2429,9 +2914,25 @@
                     await renderSinglePage(i);
                 }
 
-                setActivePage(Math.min(currentPageIndex, pdfDoc.numPages - 1));
+                const safeIndex = Math.max(0, Math.min(targetPage, pdfDoc.numPages - 1));
+                setActivePage(safeIndex);
+                selectedObjectIds = savedSelectedIds;
                 renderAllObjects();
                 updateUIState();
+                updateSelectionVisuals();
+
+                // Preserve view by scrolling directly to the active page or selected object
+                if (pagesData[safeIndex] && pagesData[safeIndex].wrapper) {
+                    if (selectedObjectIds.size === 1) {
+                        const singleId = Array.from(selectedObjectIds)[0];
+                        const activeObjEl = document.querySelector(`.object-item[data-object-id="${singleId}"]`);
+                        if (activeObjEl) {
+                            activeObjEl.scrollIntoView({ behavior: 'auto', block: 'center' });
+                            return;
+                        }
+                    }
+                    pagesData[safeIndex].wrapper.scrollIntoView({ behavior: 'auto', block: 'center' });
+                }
             }
 
             function setActivePage(index) {
@@ -2452,6 +2953,56 @@
                 if (page && page.wrapper) {
                     page.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
+            }
+
+            // ============================================================
+            // ZOOM ENGINE & PRESETS
+            // ============================================================
+            let zoomDebounceTimer = null;
+
+            function setZoom(newZoom, isDebounce = false) {
+                if (!isPdfLoaded || !pdfDoc) return;
+                currentZoom = clamp(Math.round(newZoom), 30, 300);
+
+                if (zoomSlider) zoomSlider.value = currentZoom;
+                if (zoomInput) zoomInput.value = currentZoom + '%';
+                if (zoomOutBtn) zoomOutBtn.disabled = currentZoom <= 30;
+                if (zoomInBtn) zoomInBtn.disabled = currentZoom >= 300;
+
+                const activePage = currentPageIndex;
+
+                clearTimeout(zoomDebounceTimer);
+                if (isDebounce) {
+                    zoomDebounceTimer = setTimeout(() => {
+                        renderAllPages(activePage);
+                    }, 120);
+                } else {
+                    renderAllPages(activePage);
+                }
+            }
+
+            function zoomFitWidth() {
+                if (!pagesData.length) return;
+                const page = pagesData[0];
+                const availableWidth = window.innerWidth - 64;
+                const targetScale = availableWidth / page.pageWidth;
+                const maxDisplayWidth = Math.min(window.innerWidth - 48, 800);
+                const baseScale = Math.min(maxDisplayWidth / page.pageWidth, 1000 / page.pageHeight, 1.25);
+                const calculatedZoom = (targetScale / baseScale) * 100;
+                setZoom(calculatedZoom);
+                notify(`Zoom diatur ke Fit Lebar (${currentZoom}%)`);
+            }
+
+            function zoomFitPage() {
+                if (!pagesData.length) return;
+                const page = pagesData[0];
+                const availableHeight = window.innerHeight - 150;
+                const targetScale = availableHeight / page.pageHeight;
+                const maxDisplayWidth = Math.min(window.innerWidth - 48, 800);
+                const baseScale = Math.min(maxDisplayWidth / page.pageWidth, 1000 / page.pageHeight, 1.25);
+                const calculatedZoom = (targetScale / baseScale) * 100;
+                setZoom(calculatedZoom);
+                notify(`Zoom diatur ke Fit Halaman (${currentZoom}%)`);
             }
 
             // ============================================================
@@ -2577,7 +3128,7 @@
                     });
 
                     currentPageIndex = insertIndex;
-                    await renderAllPages();
+                    await renderAllPages(insertIndex);
                     if (numberingConfig.enabled) applyNumbering();
                     notify(`Halaman baru (${paperKey}) ditambahkan pada posisi ${insertIndex + 1}`);
                 } catch (err) {
@@ -2607,8 +3158,9 @@
                             .map(pIdx => pIdx > targetIndex ? pIdx - 1 : pIdx);
                     });
 
-                    currentPageIndex = Math.max(0, Math.min(targetIndex, pdfDoc.numPages - 1));
-                    await renderAllPages();
+                    const safeTarget = Math.max(0, Math.min(targetIndex, pdfDoc.numPages - 1));
+                    currentPageIndex = safeTarget;
+                    await renderAllPages(safeTarget);
                     if (numberingConfig.enabled) applyNumbering();
                     notify(`Halaman ${targetIndex + 1} berhasil dihapus`);
                 } catch (err) {
@@ -2628,7 +3180,7 @@
                     pdfBytes = new Uint8Array(newBytes);
                     pdfDoc = await pdfjsLib.getDocument({ data: pdfBytes.slice(0) }).promise;
 
-                    await renderAllPages();
+                    await renderAllPages(targetIndex);
                     notify(`Halaman ${targetIndex + 1} diputar 90°`);
                     if (pageManagerModal.classList.contains('active')) {
                         renderPageManagerGrid();
@@ -2658,7 +3210,7 @@
                     });
 
                     currentPageIndex = targetIndex + 1;
-                    await renderAllPages();
+                    await renderAllPages(targetIndex + 1);
                     if (numberingConfig.enabled) applyNumbering();
                     notify(`Halaman ${targetIndex + 1} berhasil diduplikasi`);
                     if (pageManagerModal.classList.contains('active')) {
@@ -2700,7 +3252,7 @@
                     });
 
                     currentPageIndex = toIndex;
-                    await renderAllPages();
+                    await renderAllPages(toIndex);
                     if (numberingConfig.enabled) applyNumbering();
                     notify(`Halaman dipindahkan ke posisi ${toIndex + 1}`);
 
@@ -2999,6 +3551,19 @@
                 }
 
                 floatingPropertyBar.classList.add('show');
+
+                // If selected object is near bottom of viewport, gently scroll to reveal it cleanly
+                if (selectedObjectIds.size === 1) {
+                    const singleId = Array.from(selectedObjectIds)[0];
+                    const activeEl = document.querySelector(`.object-item[data-object-id="${singleId}"]`);
+                    if (activeEl) {
+                        const r = activeEl.getBoundingClientRect();
+                        const bottomLimit = window.innerHeight - (window.innerWidth <= 768 ? 140 : 90);
+                        if (r.bottom > bottomLimit) {
+                            window.scrollBy({ top: (r.bottom - bottomLimit + 40), behavior: 'smooth' });
+                        }
+                    }
+                }
             }
 
             function deselectAllObjects() {
@@ -3936,8 +4501,27 @@
                 if (quickDownloadBtn) quickDownloadBtn.disabled = !hasPdf;
                 if (pageNavInput) pageNavInput.disabled = !hasPdf;
 
+                if (zoomSlider) {
+                    zoomSlider.disabled = !hasPdf;
+                    zoomSlider.value = currentZoom;
+                }
+                if (zoomInput) {
+                    zoomInput.disabled = !hasPdf;
+                    zoomInput.value = currentZoom + '%';
+                }
+                if (zoomOutBtn) zoomOutBtn.disabled = !hasPdf || currentZoom <= 30;
+                if (zoomInBtn) zoomInBtn.disabled = !hasPdf || currentZoom >= 300;
+                if (zoomPresetDropdownBtn) zoomPresetDropdownBtn.disabled = !hasPdf;
+
                 if (exportAllLabel) exportAllLabel.textContent = `1 s/d ${pagesData.length}`;
                 if (exportCurrentLabel) exportCurrentLabel.textContent = `Halaman ${currentPageIndex + 1}`;
+
+                // Mobile dock state synchronization
+                if (mobPageManagerBtn) mobPageManagerBtn.disabled = !hasPdf;
+                if (mobAddTextBtn) mobAddTextBtn.disabled = !hasPdf;
+                if (mobAddImageBtn) mobAddImageBtn.disabled = !hasPdf;
+                if (mobAddShapeBtn) mobAddShapeBtn.disabled = !hasPdf;
+                if (mobNumberingBtn) mobNumberingBtn.disabled = !hasPdf;
 
                 setActivePage(currentPageIndex);
             }
@@ -3949,41 +4533,74 @@
                 // Dropdown toggles
                 fileMenuBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const isShown = fileMenuDropdown.classList.contains('show');
-                    closeAllDropdowns();
-                    if (!isShown) fileMenuDropdown.classList.add('show');
+                    toggleDropdown(fileMenuBtn, fileMenuDropdown);
                 });
 
                 addPageDropdownBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const isShown = addPageMenuDropdown.classList.contains('show');
-                    closeAllDropdowns();
-                    if (!isShown) addPageMenuDropdown.classList.add('show');
+                    toggleDropdown(addPageDropdownBtn, addPageMenuDropdown);
                 });
 
                 addImageDropdownBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const isShown = imageMenuDropdown.classList.contains('show');
-                    closeAllDropdowns();
-                    if (!isShown) imageMenuDropdown.classList.add('show');
+                    toggleDropdown(addImageDropdownBtn, imageMenuDropdown);
                 });
 
                 shapeDropdownBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const isShown = shapeMenuDropdown.classList.contains('show');
-                    closeAllDropdowns();
-                    if (!isShown) shapeMenuDropdown.classList.add('show');
+                    toggleDropdown(shapeDropdownBtn, shapeMenuDropdown);
+                });
+
+                zoomPresetDropdownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleDropdown(zoomPresetDropdownBtn, zoomPresetMenu);
                 });
 
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
                     menu.addEventListener('click', (e) => {
+                        if (e.target.closest('[data-close-dropdown]')) {
+                            closeAllDropdowns();
+                            return;
+                        }
                         if (!e.target.closest('.dropdown-item')) {
                             e.stopPropagation();
                         }
                     });
                 });
 
-                document.addEventListener('click', closeAllDropdowns);
+                // Global touch/click outside listener to dismiss active menu
+                function handleDismissDropdown(e) {
+                    if (!activeDropdownMenu) return;
+                    if (activeDropdownMenu.contains(e.target)) return;
+                    if (e.target.closest('.dropdown') || e.target.closest('.mobile-nav-btn')) return;
+                    closeAllDropdowns();
+                }
+
+                document.addEventListener('pointerdown', handleDismissDropdown, { passive: true });
+                document.addEventListener('click', handleDismissDropdown);
+
+                // Mobile Bottom Bar Events
+                if (mobAddPageBtn) {
+                    mobAddPageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleDropdown(mobAddPageBtn, addPageMenuDropdown);
+                    });
+                }
+                if (mobPageManagerBtn) mobPageManagerBtn.addEventListener('click', openPageManager);
+                if (mobAddTextBtn) mobAddTextBtn.addEventListener('click', openAddTextModal);
+                if (mobAddImageBtn) {
+                    mobAddImageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleDropdown(mobAddImageBtn, imageMenuDropdown);
+                    });
+                }
+                if (mobAddShapeBtn) {
+                    mobAddShapeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleDropdown(mobAddShapeBtn, shapeMenuDropdown);
+                    });
+                }
+                if (mobNumberingBtn) mobNumberingBtn.addEventListener('click', openNumberingModal);
 
                 // File Open Actions
                 openPdfItem.addEventListener('click', () => pdfFileInput.click());
@@ -4087,6 +4704,69 @@
                         }
                     }
                 });
+
+                // Zoom Control Events
+                zoomSlider.addEventListener('input', (e) => {
+                    setZoom(parseInt(e.target.value, 10), true);
+                });
+                zoomSlider.addEventListener('change', (e) => {
+                    setZoom(parseInt(e.target.value, 10), false);
+                });
+                zoomOutBtn.addEventListener('click', () => {
+                    const step = currentZoom <= 100 ? 15 : 25;
+                    setZoom(currentZoom - step);
+                });
+                zoomInBtn.addEventListener('click', () => {
+                    const step = currentZoom < 100 ? 15 : 25;
+                    setZoom(currentZoom + step);
+                });
+                zoomInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const clean = parseInt(zoomInput.value.replace('%', '').trim(), 10);
+                        if (!isNaN(clean)) {
+                            setZoom(clean);
+                        } else {
+                            zoomInput.value = currentZoom + '%';
+                        }
+                    }
+                });
+                zoomInput.addEventListener('blur', () => {
+                    const clean = parseInt(zoomInput.value.replace('%', '').trim(), 10);
+                    if (!isNaN(clean)) {
+                        setZoom(clean);
+                    } else {
+                        zoomInput.value = currentZoom + '%';
+                    }
+                });
+                zoomPresetDropdownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = zoomPresetMenu.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) zoomPresetMenu.classList.add('show');
+                });
+                document.querySelectorAll('[data-zoom-preset]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const preset = btn.dataset.zoomPreset;
+                        if (preset === 'fit-width') {
+                            zoomFitWidth();
+                        } else if (preset === 'fit-page') {
+                            zoomFitPage();
+                        } else {
+                            const val = parseInt(preset, 10);
+                            if (!isNaN(val)) setZoom(val);
+                        }
+                        closeAllDropdowns();
+                    });
+                });
+
+                // Ctrl + MouseWheel Zooming
+                window.addEventListener('wheel', (e) => {
+                    if (e.ctrlKey && isPdfLoaded) {
+                        e.preventDefault();
+                        const delta = e.deltaY < 0 ? 10 : -10;
+                        setZoom(currentZoom + delta, true);
+                    }
+                }, { passive: false });
 
                 // Select All Objects Button in Topbar
                 selectAllObjectsBtn.addEventListener('click', selectAllObjectsOnCurrentPage);
